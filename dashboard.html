@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hirex - Professional Ecosystem</title>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Authentication Portal (Initial View) -->
+    <div id="auth-portal" class="auth-fullscreen">
+        <div class="auth-wrapper">
+            <div class="auth-left">
+                <div class="auth-branding">
+                    <i class="ph-fill ph-circles-three"></i> Hirex Platform
+                </div>
+                <h1>The high-trust ecosystem for modern professionals and enterprises.</h1>
+                <p>Join thousands of verified companies, investors, and talent securing deals and scaling operations securely.</p>
+                <div class="auth-stats">
+                    <div class="stat"><span class="val">14K+</span><span class="lbl">Verified Firms</span></div>
+                    <div class="stat"><span class="val">$450M</span><span class="lbl">Deal Flow</span></div>
+                    <div class="stat"><span class="val">2.1M</span><span class="lbl">Professionals</span></div>
+                </div>
+            </div>
+
+            <div class="auth-right">
+                
+                <!-- LOGIN VIEW -->
+                <div id="auth-view-login" class="auth-form-container active">
+                    <h2>Log In</h2>
+                    <p class="auth-subtitle">Access your trusted workspace</p>
+                    
+                    <div class="form-group margin-bottom">
+                        <label>Email Address</label>
+                        <input type="email" id="login-email" placeholder="professional@email.com" class="auth-input">
+                    </div>
+                    
+                    <p id="login-msg" style="font-size:13px; color:#10B981; display:none; margin-bottom:12px; font-weight:600;"></p>
+                    <p id="login-error" style="font-size:13px; color:#EF4444; display:none; margin-bottom:12px; font-weight:600;"></p>
+                    
+                    <button id="btn-login-magic" class="btn btn-primary btn-full auth-btn" onclick="window.enterApplication()">Login to Workspace</button>
+                    
+                    <div class="auth-divider"><span>or new to platform?</span></div>
+                    
+                    <div class="auth-split-actions">
+                        <button class="btn btn-outline" onclick="window.switchAuthView('register-indiv')"><i class="ph ph-user"></i> Sign up as Individual</button>
+                        <button class="btn btn-outline" onclick="window.switchAuthView('register-comp')"><i class="ph ph-buildings"></i> Register Company</button>
+                    </div>
+                </div>
+
+                <!-- INDIVIDUAL REGISTRATION VIEW -->
+                <div id="auth-view-register-indiv" class="auth-form-container" style="display:none;">
+                    <h2>Join as a Professional</h2>
+                    <p class="auth-subtitle">Build your verified identity</p>
+                    
+                    <!-- Indiv Step 1: Verification -->
+                    <div id="indiv-step-1">
+
+                        
+                        <div class="auth-verification-box margin-bottom">
+                            <h4 style="margin-bottom:12px; font-size:14px;"><i class="ph-fill ph-envelope"></i> Email Verification <span style="color:#EF4444;">*</span></h4>
+                            <input type="email" id="indiv-reg-email" placeholder="professional@email.com" class="auth-input margin-bottom" oninput="document.getElementById('btn-next-step').style.opacity='0.5'; document.getElementById('btn-next-step').style.pointerEvents='none';">
+                            <p id="indiv-error-msg" style="color:#EF4444; font-size:12px; font-weight:600; margin-bottom:8px; display:none;"></p>
+                            <button id="btn-indiv-verify" class="btn btn-outline btn-full" onclick="window.enterApplication()">Bypass Verification (Testing)</button>
+                            <p id="indiv-reg-msg" style="color:#10B981; font-size:12px; font-weight:600; margin-top:8px; display:none;"><i class="ph-fill ph-check-circle"></i> Verification link sent. Please click it in your email to continue.</p>
+                        </div>
+                        
+                        <div class="flex-between margin-top" style="padding-top:16px;">
+                            <span style="font-size:13px; cursor:pointer; font-weight:600; color:var(--text-muted);" onclick="window.switchAuthView('login')"><i class="ph ph-arrow-left"></i> Back to Login</span>
+                            <button id="btn-next-step" class="btn btn-primary" style="opacity:0.5; pointer-events:none;" onclick="document.getElementById('indiv-step-1').style.display='none'; document.getElementById('indiv-step-2').style.display='block';">Next Step <i class="ph ph-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Indiv Step 2: Profile Setup -->
+                    <div id="indiv-step-2" style="display:none;">
+                        <span class="badge badge-trust margin-bottom" style="display:inline-block;"><i class="ph-fill ph-seal-check"></i> Verification Complete</span>
+                        <div class="grid-layout two-col margin-bottom">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="auth-fname" placeholder="Jane" class="auth-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="auth-lname" placeholder="Doe" class="auth-input">
+                            </div>
+                        </div>
+                        <div class="form-group margin-bottom">
+                            <label>Professional Email (Verified)</label>
+                            <input type="email" id="indiv-verified-email" readonly class="auth-input" style="background:rgba(255,255,255,0.05); color:#64748B;">
+                        </div>
+                        <div class="grid-layout two-col margin-bottom">
+                            <div class="form-group">
+                                <label>Recent Working Role</label>
+                                <input type="text" id="auth-job" placeholder="e.g. Lead Product Designer" class="auth-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Working Company</label>
+                                <input type="text" id="auth-company" placeholder="e.g. Figma" class="auth-input">
+                            </div>
+                        </div>
+                        <div class="form-group margin-bottom">
+                            <label>Experiences Summary</label>
+                            <textarea id="auth-experience" placeholder="Briefly describe your professional journey..." class="auth-input" style="height:60px; resize:none;"></textarea>
+                        </div>
+                        <div class="form-group margin-bottom">
+                            <label>Core Skills (Comma separated)</label>
+                            <input type="text" id="auth-skills" placeholder="e.g., UX Research, Prototyping, CSS" class="auth-input">
+                        </div>
+                        <div class="grid-layout two-col margin-bottom">
+                            <div class="form-group">
+                                <label>Education</label>
+                                <input type="text" id="auth-edu" placeholder="e.g., MS Computer Science" class="auth-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="auth-loc" placeholder="e.g., San Francisco, CA" class="auth-input">
+                            </div>
+                        </div>
+                        <div class="flex-between margin-top" style="padding-top:16px;">
+                            <span style="font-size:13px; cursor:pointer; font-weight:600; color:var(--text-muted);" onclick="document.getElementById('indiv-step-2').style.display='none'; document.getElementById('indiv-step-1').style.display='block';"><i class="ph ph-arrow-left"></i> Back</span>
+                            <button class="btn btn-primary" style="background:#10B981;" onclick="window.enterApplication('individual')">Create Profile</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPANY REGISTRATION VIEW -->
+                <div id="auth-view-register-comp" class="auth-form-container" style="display:none;">
+                    <h2>Register Enterprise</h2>
+                    <p class="auth-subtitle">Establish your corporate identity</p>
+                    
+                    <div class="form-group margin-bottom">
+                        <label>Legal Company Name</label>
+                        <input type="text" id="comp-reg-name" placeholder="e.g. Acme Corp Technologies" class="auth-input">
+                    </div>
+                    
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Business Type</label>
+                            <select id="comp-reg-type" class="auth-input">
+                                <option>Private Limited (Pvt Ltd)</option>
+                                <option>LLP</option>
+                                <option>Sole Proprietorship</option>
+                                <option>Public Limited</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <select id="comp-reg-industry" class="auth-input">
+                                <option>IT / SaaS</option>
+                                <option>Manufacturing</option>
+                                <option>FinTech</option>
+                                <option>Healthcare</option>
+                                <option>E-Commerce</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group margin-bottom">
+                        <label>Short Description</label>
+                        <textarea id="comp-reg-desc" placeholder="What does your company do in 1-2 sentences?" class="auth-input" style="height:60px; resize:none;"></textarea>
+                    </div>
+
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Official Business Email</label>
+                            <input type="email" id="comp-reg-email" placeholder="admin@acmecorp.com" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Years of Operation (Optional)</label>
+                            <input type="number" id="comp-reg-years" placeholder="e.g. 5" class="auth-input">
+                        </div>
+                    </div>
+                    
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>GST Number <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="comp-reg-gst" placeholder="22AAAAA0000A1Z5" class="auth-input" style="font-family:monospace;">
+                        </div>
+                        <div class="form-group">
+                            <label>Website (Optional)</label>
+                            <input type="text" id="comp-reg-website" placeholder="https://" class="auth-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group margin-bottom">
+                        <label>LinkedIn Page (Optional)</label>
+                        <input type="text" id="comp-reg-linkedin" placeholder="linkedin.com/company/..." class="auth-input">
+                    </div>
+                    
+                    <div class="auth-verification-box margin-bottom" style="background:rgba(180, 83, 9, 0.15); border-color:#FDE68A;">
+                        <h4 style="font-size:13px; color:#B45309;"><i class="ph-fill ph-warning-circle"></i> KYC Notice</h4>
+                        <p style="font-size:11px; color:#92400E; margin-top:4px;">You can enter the platform immediately, but you must complete full CIN/Structural Verification via the Trust Center before you can post in the Venture Funding Hub.</p>
+                    </div>
+
+                    <p id="comp-error-msg" style="color:#EF4444; font-size:12px; font-weight:600; text-align:center; display:none;"></p>
+                    <p id="comp-success-msg" style="color:#10B981; font-size:12px; font-weight:600; text-align:center; display:none; margin-bottom:12px;">Link sent! Check your official business email to enter.</p>
+                    <div class="flex-between margin-top" style="padding-top:16px;">
+                        <span style="font-size:13px; cursor:pointer; font-weight:600; color:var(--text-muted);" onclick="window.switchAuthView('login')"><i class="ph ph-arrow-left"></i> Back to Login</span>
+                        <button id="btn-comp-verify" class="btn btn-primary" style="background:#1D4ED8;" onclick="window.enterApplication('company')">Bypass Verification (Enterprise)</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="app-container" style="display:none;">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="ph-fill ph-circles-three"></i>
+                <span>Platform</span>
+            </div>
+            
+            <nav class="nav-links">
+                <div class="nav-section">
+                    <p class="nav-subtitle">Network & Content</p>
+                    <a href="#" class="nav-item active" data-target="home">
+                        <i class="ph ph-house"></i> Home Feed
+                    </a>
+                    <a href="#" class="nav-item" data-target="network">
+                        <i class="ph ph-users"></i> Network
+                    </a>
+                    
+                    <p class="nav-subtitle" style="margin-top:16px;">Opportunities</p>
+                    <a href="#" class="nav-item" data-target="jobs">
+                        <i class="ph ph-briefcase"></i> Jobs
+                    </a>
+                    <a href="#" class="nav-item" data-target="funding">
+                        <i class="ph ph-bank"></i> Venture Funding
+                    </a>
+                    <a href="#" class="nav-item" data-target="services">
+                        <i class="ph ph-wrench"></i> B2B Services
+                    </a>
+                    
+                    <p class="nav-subtitle" style="margin-top:16px;">Ecosystem</p>
+                    <a href="#" class="nav-item" data-target="companies">
+                        <i class="ph ph-buildings"></i> Companies
+                    </a>
+                    <a href="#" class="nav-item" data-target="events">
+                        <i class="ph ph-calendar-star"></i> Events
+                    </a>
+                    <a href="#" class="nav-item" data-target="messages">
+                        <i class="ph ph-tray"></i> Inbox
+                    </a>
+
+                    <p class="nav-subtitle" style="margin-top:16px;">Growth Tools</p>
+                    <a href="#" class="nav-item" data-target="promotion">
+                        <i class="ph ph-megaphone"></i> Promotion Studio
+                    </a>
+                </div>
+
+                <div class="nav-section bottom-nav">
+                    <a href="#" class="nav-item" onclick="document.getElementById('biometrics-modal').classList.add('active')">
+                        <i class="ph-fill ph-fingerprint text-blue"></i> Verify Identity (Face ID)
+                    </a>
+                    <a href="#" class="nav-item" data-target="promotion-studio">
+                        <i class="ph ph-megaphone text-slate"></i> Promotion Studio
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Top Navigation Bar -->
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" placeholder="Search people, companies, or opportunities...">
+                </div>
+                
+                <div class="topbar-actions">
+                    <button class="btn btn-primary" id="btn-universal-create">
+                        <i class="ph ph-plus"></i> Create
+                    </button>
+                    
+                    <button class="icon-btn" title="Rewards" data-target="rewards">
+                        <i class="ph ph-gift"></i>
+                    </button>
+                    
+                    <button class="icon-btn" title="Notifications">
+                        <i class="ph ph-bell"></i>
+                    </button>
+                    
+                    <div class="user-profile-menu" style="position:relative;">
+                        <img src="https://i.pravatar.cc/150?img=68" alt="Profile" class="avatar" id="pfp-trigger" style="cursor:pointer; border:2px solid transparent; transition:border 0.2s;" onclick="togglePfpDropdown()">
+                        <!-- Dropdown Menu -->
+                        <div id="pfp-dropdown" style="display:none; position:absolute; top:48px; right:0; background-color: transparent; border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); width:200px; z-index:100; overflow:hidden;">
+                            <div style="padding:12px; border-bottom:1px solid var(--border); background:rgba(0,0,0,0.2);">
+                                <h4 style="font-size:14px; font-weight:600;">My Identity</h4>
+                                <span style="font-size:11px; color:#1D4ED8; font-weight:600; display:flex; align-items:center; gap:4px; margin-top:2px;"><i class="ph-fill ph-seal-check"></i> Tier 1 Verified</span>
+                            </div>
+                            <div style="padding:4px 0; display:flex; flex-direction:column;">
+                                <a href="#" id="dropdown-view-profile" class="dropdown-item nav-item" data-target="profile" style="display:flex; align-items:center; gap:8px; padding:10px 16px; color:var(--text-main); text-decoration:none; font-size:14px;"><i class="ph ph-user"></i> View Profile</a>
+                                <a href="#" class="dropdown-item nav-item" data-target="trust-center" style="display:flex; align-items:center; gap:8px; padding:10px 16px; color:var(--text-main); text-decoration:none; font-size:14px;"><i class="ph ph-shield-check"></i> Trust Settings</a>
+                            </div>
+                            <div style="padding:4px 0; border-top:1px solid var(--border); display:flex; flex-direction:column;">
+                                <a href="#" class="dropdown-item" style="display:flex; align-items:center; gap:8px; padding:10px 16px; color:#EF4444; font-weight:600; text-decoration:none; font-size:14px;"><i class="ph ph-sign-out"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tab Content Containers -->
+            <div class="content-wrapper">
+                
+                <!-- Home Tab (High Value Content Only) -->
+                <section id="home" class="tab-pane active fade-in">
+                    <header class="page-header">
+                        <h2>Home Feed</h2>
+                        <p>Industry insights, thought leadership, and high-value updates.</p>
+                    </header>
+                    <div class="feed-grid">
+                        <div class="feed-main">
+                            <!-- Composer -->
+                            <div class="post-composer card" id="inline-create-trigger">
+                                <img src="https://i.pravatar.cc/150?img=68" alt="Profile" class="avatar-sm">
+                                <input type="text" placeholder="Share a market insight, leadership announcement, or milestone..." readonly>
+                            </div>
+                            
+                            <!-- Sponsored Display Ad (Top of Feed) -->
+                            <div class="feed-item card" style="border:1px solid #BFDBFE; background:rgba(0,0,0,0.2);">
+                                <div class="post-header" style="margin-bottom:8px; border-bottom:none; padding-bottom:0;">
+                                    <div class="flex-row">
+                                        <img src="https://i.pravatar.cc/150?img=50" alt="Sponsor" class="avatar-sm">
+                                        <div class="post-meta">
+                                            <h4 class="verified-company-title">Nexus Cloud Services <i class="ph-fill ph-shield-check text-blue"></i></h4>
+                                            <span class="text-sm text-muted" style="margin-top:-2px;">Cloud Infrastructure</span>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Sponsored</span>
+                                </div>
+                                <div class="post-body" style="padding-top:4px;">
+                                    <p style="font-weight:500;">Accelerate your product deployment with our verified backend architecture. Claim your free initial security audit for verified platform startups.</p>
+                                    
+                                    <!-- Ad Image / Media Embed -->
+                                    <div style="height:220px; background:linear-gradient(45deg, #1E3A8A, #3B82F6); border-radius:8px; margin:12px 0; display:flex; align-items:center; justify-content:center; color:white; overflow:hidden; position:relative;">
+                                        <i class="ph ph-cloud-arrow-up" style="font-size:80px; opacity:0.3; position:absolute;"></i>
+                                        <h2 style="position:relative; z-index:10; font-size:24px; text-align:center; padding:0 20px;">Enterprise Grade<br>Security Audits.</h2>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary btn-full" style="background:#1D4ED8;"><i class="ph ph-arrow-up-right"></i> Claim Free Audit Today</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Pure Professional Feed Items -->
+                            <div class="feed-item card">
+                                <div class="post-header">
+                                    <img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-sm">
+                                    <div class="post-meta">
+                                        <h4 class="verified-human">Sarah Jenkins <i class="ph-fill ph-seal-check" title="Verified Human"></i></h4>
+                                        <span>Product Lead at Acme <i class="ph-fill ph-shield-check company-badge" title="Verified Company"></i></span>
+                                    </div>
+                                    <span class="badge badge-insight">Market Insight</span>
+                                </div>
+                                <div class="post-body">
+                                    <p>Based on today's shift in API usage within our B2B segment, we are noticing a huge pivot towards automated data processing over localized dashboard analysis. If you're building SaaS in Q4, shift your retention strategies toward API throughput limits rather than seat licenses.</p>
+                                </div>
+                                <div class="post-metrics">
+                                    <span><i class="ph-fill ph-thumbs-up"></i> 1,402</span>
+                                    <span><i class="ph-fill ph-chat-circle"></i> 89 comments</span>
+                                </div>
+                                <div class="post-actions">
+                                    <button><i class="ph ph-thumbs-up"></i> Endorse Insight</button>
+                                    <button><i class="ph ph-chat-circle"></i> Discuss</button>
+                                    <button><i class="ph ph-share-network"></i> Share</button>
+                                </div>
+                            </div>
+                            
+                            <div class="feed-item card featured-style">
+                                <div class="post-header">
+                                    <div class="company-logo"><i class="ph ph-buildings"></i></div>
+                                    <div class="post-meta">
+                                        <h4 class="verified-company-title">TechNova Inc. <i class="ph-fill ph-shield-check company-badge" title="Verified Company"></i></h4>
+                                        <span>Company News • Promoted</span>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <p>We are officially SOC2 Type II Certified! A massive thank you to our security and infra teams for 6 months of relentless work ensuring our enterprise clients operate in a 100% trusted environment.</p>
+                                </div>
+                                <div class="post-actions" style="border-top:none; padding-top:0;">
+                                    <button class="btn btn-outline">Read Press Release</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Growth & Network Layer Sidebar -->
+                        <div class="feed-sidebar">
+                            <div class="widget card stat-widget">
+                                <h3>Your Credibility Signals</h3>
+                                <div class="stat-row">
+                                    <span>Network Strength</span>
+                                    <div class="progress-bar"><div class="progress-fill blue" style="width: 85%"></div></div>
+                                </div>
+                                <div class="stat-row" style="margin-top:12px;">
+                                    <span>Identity Verification</span>
+                                    <div><span class="badge badge-verified"><i class="ph-fill ph-seal-check"></i> Verified</span></div>
+                                </div>
+                            </div>
+                            <div class="widget card">
+                                <h3>Key Connections</h3>
+                                <div class="connection-item">
+                                    <img src="https://i.pravatar.cc/150?img=11" alt="User" class="avatar-sm">
+                                    <div class="info">
+                                        <p class="verified-human">Michael Chang <i class="ph-fill ph-seal-check"></i></p>
+                                        <span>VP Engineering</span>
+                                    </div>
+                                    <button class="icon-btn-small"><i class="ph ph-user-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Network Directory Tab -->
+                <section id="network" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Your Network</h2>
+                        <p>Grow your circle with verified professionals.</p>
+                    </header>
+                    <div class="grid-layout three-col">
+                        <div class="card stat-card">
+                            <i class="ph ph-users text-blue"></i>
+                            <div class="stat-info">
+                                <h3>1,204</h3>
+                                <p>Connections</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="advanced-filters card flex-row">
+                        <span>Filter Network:</span>
+                        <select class="filter-dropdown"><option>All Roles</option><option>CTOs</option><option>Investors</option></select>
+                        <select class="filter-dropdown"><option>All Industries</option><option>Fintech</option></select>
+                        <div class="flex-row" style="gap:4px">
+                            <input type="checkbox" id="verified-only" checked>
+                            <label for="verified-only">Verified Humans Only <i class="ph-fill ph-seal-check text-blue"></i></label>
+                        </div>
+                    </div>
+                    <div class="grid-layout four-col margin-top">
+                        <!-- Brief Profile Card for Directory -->
+                        <div class="card profile-card" style="text-align:center; padding:24px;">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-lg" style="margin:0 auto 12px auto; display:block;">
+                            <h4 class="verified-human" style="justify-content:center; font-size:15px; margin-bottom:4px;">Sarah Jenkins <i class="ph-fill ph-seal-check text-blue" title="Verified Human"></i></h4>
+                            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Product Lead at Acme <i class="ph-fill ph-shield-check text-slate company-badge" title="Verified Company"></i></p>
+                            <button class="btn btn-outline btn-full">Connect</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Professional Profile Tab (Triggered from Topbar PFP) -->
+                <section id="profile" class="tab-pane fade-in">
+                    <header class="page-header flex-between">
+                        <div>
+                            <h2>My Profile</h2>
+                            <p>Here is what the verified ecosystem sees when viewing your ledger.</p>
+                        </div>
+                        <button class="btn btn-outline btn-small"><i class="ph ph-arrow-left"></i> Back to Network Directory</button>
+                    </header>
+                    
+                    <div class="card" style="padding:0; overflow:hidden; border:1px solid var(--border);">
+                        <!-- Hero Header -->
+                        <div style="height:140px; background:linear-gradient(135deg, #1E3A8A, #0F172A); position:relative;"></div>
+                        
+                        <div style="padding:24px; position:relative;">
+                            <!-- Profile Picture & Hero Actions (Self-Editing) -->
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:-70px; margin-bottom:16px;">
+                                <div style="position:relative; z-index:10;">
+                                    <div style="position:relative; width:120px; height:120px; border-radius:50%; border:4px solid white; box-shadow:0 1px 3px rgba(0,0,0,0.1); background-image:url('https://i.pravatar.cc/150?img=68'); background-size:cover; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+                                        <div style="background:rgba(0,0,0,0.5); width:100%; height:100%; border-radius:50%; position:absolute; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                                            <i class="ph-fill ph-camera" style="color:white; font-size:24px;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-row gap-small" style="z-index:10;">
+                                    <button class="btn btn-primary" style="background:#1D4ED8;"><i class="ph ph-pencil-simple"></i> Edit Profile Header</button>
+                                </div>
+                            </div>
+
+                            <!-- Core Identity -->
+                            <div>
+                                <h1 class="verified-human" style="font-size:28px; display:flex; align-items:center; gap:8px;">Your Name <i class="ph ph-pencil-simple text-muted" style="font-size:16px; cursor:pointer;"></i></h1>
+                                <p style="font-size:16px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px; cursor:pointer;"><i class="ph ph-plus-circle text-blue"></i> Add Current Company Role</p>
+                                <p style="font-size:14px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px; cursor:pointer;"><i class="ph ph-map-pin"></i> Add Location</p>
+                            </div>
+
+                            <!-- The Verification Ledger -->
+                            <div class="margin-top" style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:16px; display:flex; gap:24px;">
+                                <div style="flex:1;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Identity Anchor</span>
+                                    <p style="font-size:14px; font-weight:600; color:#1E3A8A; margin-top:4px; display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-check-circle text-blue"></i> Biometric Verified (Stripe)</p>
+                                </div>
+                                <div style="flex:1; border-left:1px solid var(--border); padding-left:24px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Corporate Employment</span>
+                                    <p style="font-size:14px; font-weight:600; color:#166534; margin-top:4px; display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-check-circle text-green"></i> Verified via WorkOS API</p>
+                                </div>
+                                <div style="flex:1; border-left:1px solid var(--border); padding-left:24px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Trust Network</span>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                                        <div class="flex-row gap-small" style="gap:2px;">
+                                            <img src="https://i.pravatar.cc/150?img=11" class="avatar-sm" style="width:24px; height:24px; border-radius:50%;">
+                                            <img src="https://i.pravatar.cc/150?img=43" class="avatar-sm" style="width:24px; height:24px; border-radius:50%; margin-left:-10px;">
+                                        </div>
+                                        <p style="font-size:13px; font-weight:500; color:var(--text-muted);">Vouched by 3 Tier-1 Peers</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid-layout" style="grid-template-columns: 2fr 1fr; gap:24px; margin-top:32px;">
+                                <!-- Left Column: Experience & Education -->
+                                <div>
+                                    <!-- Professional Experience Section -->
+                                    <div class="flex-between" style="border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px;">
+                                        <h3 style="font-size:18px;">Professional Experience</h3>
+                                    </div>
+                                    <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:32px;">
+                                        <!-- Editable Experience Card -->
+                                        <div style="border:1px dashed var(--border); padding:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(0,0,0,0.2); color:var(--text-main); cursor:pointer; font-weight:600; transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='#F8FAFC'">
+                                            <i class="ph ph-plus-circle text-blue" style="font-size:24px;"></i> Add Experience
+                                        </div>
+                                    </div>
+
+                                    <!-- Education Section -->
+                                    <div class="flex-between" style="border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px;">
+                                        <h3 style="font-size:18px;">Education</h3>
+                                    </div>
+                                    <div style="display:flex; flex-direction:column; gap:16px;">
+                                        <!-- Editable Education Card -->
+                                        <div style="border:1px dashed var(--border); padding:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(0,0,0,0.2); color:var(--text-main); cursor:pointer; font-weight:600; transition:background 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='#F8FAFC'">
+                                            <i class="ph ph-plus-circle text-blue" style="font-size:24px;"></i> Add Education
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Profile Widgets (Skills & Match Preferences) -->
+                                <div>
+                                    <!-- Smart Match Intent Editor -->
+                                    <div style="background:rgba(59,130,246,0.15); border:1px solid #BFDBFE; border-radius:8px; padding:20px; margin-bottom:16px;">
+                                        <div class="flex-between" style="margin-bottom:16px;">
+                                            <h3 style="font-size:16px; color:#1E3A8A; display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-magic-wand"></i> Smart Match Radar</h3>
+                                            <button class="icon-btn text-blue" style="background-color: transparent;"><i class="ph ph-sliders"></i></button>
+                                        </div>
+                                        
+                                        <div style="margin-bottom:16px;">
+                                            <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; display:block;">Current Job Status</label>
+                                            <select style="width:100%; padding:10px; border:1px solid #93C5FD; border-radius:6px; font-size:14px; font-weight:600; color:#1D4ED8; background-color: transparent; cursor:pointer;">
+                                                <option>Passively Exploring</option>
+                                                <option>Actively Interviewing (Boost Me)</option>
+                                                <option>Not Looking</option>
+                                            </select>
+                                            <p style="font-size:11px; color:#60A5FA; margin-top:4px;">Controls visibility to verified recruiters.</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; display:block;">Target Next Role</label>
+                                            <input type="text" placeholder="What are you aiming for next?" value="Senior Engineering Manager" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; font-size:14px; font-weight:500;">
+                                            <p style="font-size:11px; color:#60A5FA; margin-top:4px;">The algorithm uses this to send you specific job cards.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Skills Editor -->
+                                    <div style="background-color: transparent; border:1px solid var(--border); border-radius:8px; padding:20px;">
+                                        <div class="flex-between" style="margin-bottom:16px;">
+                                            <h3 style="font-size:16px;">Skills & Expertise</h3>
+                                        </div>
+                                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                            <span class="pill" style="border:1px dashed var(--border); cursor:pointer; background:rgba(0,0,0,0.2); font-weight:600;"><i class="ph ph-plus text-blue"></i> Add Skill</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Jobs Tab (Talent Marketplace) -->
+                <section id="jobs" class="tab-pane fade-in">
+                    <header class="page-header" style="border-bottom:none; padding-bottom:0;">
+                        <div class="flex-between">
+                            <div>
+                                <h2>Talent Marketplace</h2>
+                                <p>Premium opportunities for verified professionals.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Sub-navigation for Jobs Tab -->
+                        <div class="company-activity-tabs margin-top" style="border-bottom:1px solid var(--border); display:flex; gap:24px; margin-bottom:24px;">
+                            <span id="tab-btn-fulltime" style="font-weight:600; color:var(--trust-blue); padding-bottom:12px; border-bottom:2px solid var(--trust-blue); cursor:pointer;" onclick="document.getElementById('jobs-fulltime').style.display='block'; document.getElementById('jobs-freelance').style.display='none'; this.style.color='var(--trust-blue)'; this.style.borderBottom='2px solid var(--trust-blue)'; document.getElementById('tab-btn-freelance').style.color='var(--text-muted)'; document.getElementById('tab-btn-freelance').style.borderBottom='none';">Full Time Roles</span>
+                            <span id="tab-btn-freelance" style="font-weight:500; color:var(--text-muted); padding-bottom:12px; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="document.getElementById('jobs-freelance').style.display='block'; document.getElementById('jobs-fulltime').style.display='none'; this.style.color='var(--trust-blue)'; this.style.borderBottom='2px solid var(--trust-blue)'; document.getElementById('tab-btn-fulltime').style.color='var(--text-muted)'; document.getElementById('tab-btn-fulltime').style.borderBottom='none';">Freelancing <span style="background:#1D4ED8; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700;">PRO</span></span>
+                        </div>
+                    </header>
+                    
+                    <!-- FULL TIME ROLES VIEW -->
+                    <div id="jobs-fulltime">
+                        <div class="advanced-filters card flex-between">
+                            <div class="flex-row">
+                                <select class="filter-dropdown"><option>Seniority</option><option>Senior</option><option>Lead</option><option>C-Level</option></select>
+                                <select class="filter-dropdown"><option>Location</option><option>Remote</option><option>On-site</option></select>
+                                <select class="filter-dropdown"><option>Compensation</option><option>$100k+</option><option>Equity Included</option></select>
+                            </div>
+                            <div><span class="badge badge-trust"><i class="ph-fill ph-shield-check"></i> Verified Companies Only</span></div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top:24px;">
+                            
+                            <!-- Smart Matching Engine UI (Full Time) -->
+                            <div class="smart-match-container" style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+                                <div class="smart-match-header flex-between" style="align-items:center;">
+                                    <div>
+                                        <h3 style="font-size:16px; color:#166534;"><i class="ph-fill ph-magic-wand"></i> Smart Match: Salaries</h3>
+                                        <span style="font-size:12px; color:#15803D; font-weight:600; display:block; margin-top:4px;">Auto-generated based on your activity & verified skills</span>
+                                    </div>
+                                </div>
+                                <div class="grid-layout one-col" style="margin-top:16px;">
+                                    <div class="card job-card" style="border-top:none; box-shadow:var(--shadow-md);">
+                                        <div class="flex-row">
+                                            <div class="company-logo bg-slate"><i class="ph-fill ph-buildings text-white"></i></div>
+                                            <div class="job-info">
+                                                <h3 class="verified-company-title">Lead React Engineer <i class="ph-fill ph-shield-check company-badge"></i></h3>
+                                                <p>PixelForge LLC • Remote (US)</p>
+                                            </div>
+                                        </div>
+                                        <div class="job-details">
+                                            <span>$140,000 - $180,000 / yr</span>
+                                            <span>Full Time • Equity</span>
+                                        </div>
+                                        <div class="match-reason" style="background-color: transparent; padding:12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-main);">
+                                            <i class="ph-fill ph-check-circle text-green"></i> Matches your 8 years React experience & salary requirements
+                                        </div>
+                                        <div class="flex-between margin-top">
+                                            <button class="btn btn-primary" style="background:#166534;">Apply as Verified Candidate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline" style="margin-top:auto; padding-top:16px; border-color:#BBF7D0; color:#15803D; font-weight:600; text-align:center; display:block; width:100%;" onclick="window.switchTab('jobs-expanded-smart-ft')">View All Matches (12) <i class="ph ph-arrow-right"></i></button>
+                            </div>
+                            
+                            <!-- Regular Directory (Full Time) -->
+                            <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+                                <div style="margin-bottom:16px;">
+                                    <h3 style="font-size:16px; color:var(--text-main);">Regular Directory</h3>
+                                    <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block; margin-top:4px;">All Verified Full Time Roles</span>
+                                </div>
+                                <div class="grid-layout one-col">
+                                    <div class="card job-card">
+                                        <div class="flex-row">
+                                            <div class="company-logo bg-slate" style="background:#1E3A8A;"><i class="ph-fill ph-buildings text-white"></i></div>
+                                            <div class="job-info">
+                                                <h3 class="verified-company-title">Backend Architect <i class="ph-fill ph-shield-check company-badge"></i></h3>
+                                                <p>Global Dynamics • New York, NY</p>
+                                            </div>
+                                        </div>
+                                        <div class="job-details">
+                                            <span>$180,000 - $220,000 / yr</span>
+                                            <span>Full Time • Hybrid</span>
+                                        </div>
+                                        <p class="description">Leading architectural decisions for our next-generation cloud deployment dashboard.</p>
+                                        <div class="flex-between">
+                                            <button class="btn btn-primary">Apply as Verified Candidate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline" style="margin-top:auto; padding-top:16px; font-weight:600; text-align:center; display:block; width:100%;" onclick="window.switchTab('jobs-expanded-reg-ft')">Browse Directory (842) <i class="ph ph-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FREELANCE / UPWORK STYLE VIEW -->
+                    <div id="jobs-freelance" style="display:none;">
+                        <div class="advanced-filters card flex-between">
+                            <div class="flex-row">
+                                <select class="filter-dropdown"><option>Hourly Rate</option><option>$50-$100/hr</option><option>$100+/hr</option></select>
+                                <select class="filter-dropdown"><option>Project Length</option><option>< 1 Month</option><option>3-6 Months</option><option>Ongoing</option></select>
+                                <select class="filter-dropdown"><option>Client Spend</option><option>$10k+ Spent</option></select>
+                            </div>
+                            <div><span class="badge badge-trust" style="background:#FEF3C7; color:#B45309;"><i class="ph-fill ph-check-circle"></i> Payment Escrow Verified</span></div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top:24px;">
+                            
+                            <!-- Smart Matching Engine UI (Freelance) -->
+                            <div class="smart-match-container" style="background:#EEF2FF; border:1px solid #C7D2FE; border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+                                <div class="smart-match-header flex-between" style="align-items:center;">
+                                    <div>
+                                        <h3 style="font-size:16px; color:#4338CA;"><i class="ph-fill ph-magic-wand"></i> Smart Match: Freelance Contracts</h3>
+                                        <span style="font-size:12px; color:#4F46E5; font-weight:600; display:block; margin-top:4px;">Auto-generated based on your hourly rate map & preferred tech stack</span>
+                                    </div>
+                                </div>
+                                <div class="grid-layout one-col" style="margin-top:16px;">
+                                    <div class="card job-card" style="border-top:none; box-shadow:var(--shadow-md);">
+                                        <div class="flex-row">
+                                            <div class="company-logo bg-slate" style="background:#4338CA;"><i class="ph-fill ph-code text-white"></i></div>
+                                            <div class="job-info">
+                                                <h3 class="verified-company-title">React Dashboard Overhaul <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                                <p>Acme Corp • FinTech Client ($50k+ Spent)</p>
+                                            </div>
+                                        </div>
+                                        <div class="job-details">
+                                            <span style="color:#4338CA; font-weight:700;">$120.00 / hr</span>
+                                            <span>Freelance • 3-6 Months • 20hrs/week</span>
+                                        </div>
+                                        <div class="match-reason" style="background-color: transparent; padding:12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-main);">
+                                            <i class="ph-fill ph-check-circle text-blue"></i> Your React skills map perfectly to their requirements.
+                                        </div>
+                                        <div class="flex-between margin-top">
+                                            <button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button>
+                                            <span class="text-muted" style="font-size:12px;">3 Proposals Sent</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline" style="margin-top:auto; padding-top:16px; border-color:#C7D2FE; color:#4338CA; font-weight:600; text-align:center; display:block; width:100%;" onclick="window.switchTab('jobs-expanded-smart-fl')">View All Matches (8) <i class="ph ph-arrow-right"></i></button>
+                            </div>
+                            
+                            <!-- Regular Directory (Freelance) -->
+                            <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+                                <div style="margin-bottom:16px;">
+                                    <h3 style="font-size:16px; color:var(--text-main);">Regular Directory</h3>
+                                    <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block; margin-top:4px;">All Verified Freelance Contracts</span>
+                                </div>
+                                <div class="grid-layout one-col">
+                                    <div class="card job-card">
+                                        <div class="flex-row">
+                                            <div class="company-logo bg-slate" style="background:#0F172A;"><i class="ph-fill ph-paint-brush text-white"></i></div>
+                                            <div class="job-info">
+                                                <h3 class="verified-company-title">UI/UX Designer for MVP <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                                <p>Seed Stage Startup • Remote</p>
+                                            </div>
+                                        </div>
+                                        <div class="job-details">
+                                            <span style="color:#4338CA; font-weight:700;">$8,000 Fixed Price</span>
+                                            <span>Freelance • < 1 Month</span>
+                                        </div>
+                                        <p class="description">Need a high-fidelity Figma mockup for our new generative AI product dashboard. Delivery needed in 3 weeks.</p>
+                                        <div class="flex-between">
+                                            <button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline" style="margin-top:auto; padding-top:16px; font-weight:600; text-align:center; display:block; width:100%;" onclick="window.switchTab('jobs-expanded-reg-fl')">Browse Directory (204) <i class="ph ph-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================== -->
+                <!-- EXPANDED JOB VIEWS (THE "VIEW ALL" WINDOWS) -->
+                <!-- ============================================== -->
+
+                <!-- Expanded: Smart Match Full Time -->
+                <section id="jobs-expanded-smart-ft" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <div>
+                            <button class="btn btn-outline btn-small" onclick="window.switchTab('jobs')" style="margin-bottom:16px;"><i class="ph ph-arrow-left"></i> Back to Talent Marketplace</button>
+                            <h2 style="color:#166534;"><i class="ph-fill ph-magic-wand"></i> Smart Match: Full Time Salaries</h2>
+                            <p style="color:#15803D;">Showing all 12 highly matched salaried roles for your profile.</p>
+                        </div>
+                    </header>
+                    <div class="grid-layout three-col">
+                        <!-- Duplicated Cards for visual expansion -->
+                        <div class="card job-card" style="border-top:2px solid #166534;"><div class="flex-row"><div class="company-logo bg-slate"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Lead React Engineer <i class="ph-fill ph-shield-check company-badge"></i></h3><p>PixelForge LLC • Remote</p></div></div><div class="job-details"><span>$140k - $180k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#166534;">Apply</button></div></div>
+                        <div class="card job-card" style="border-top:2px solid #166534;"><div class="flex-row"><div class="company-logo bg-slate" style="background:#0F172A;"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Senior Frontend Dev <i class="ph-fill ph-shield-check company-badge"></i></h3><p>Vanguard Tech • Hybrid</p></div></div><div class="job-details"><span>$130k - $160k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#166534;">Apply</button></div></div>
+                        <div class="card job-card" style="border-top:2px solid #166534;"><div class="flex-row"><div class="company-logo bg-slate" style="background:#1E3A8A;"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Staff Engineer <i class="ph-fill ph-shield-check company-badge"></i></h3><p>Global Dynamics • On-site</p></div></div><div class="job-details"><span>$180k - $210k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#166534;">Apply</button></div></div>
+                    </div>
+                </section>
+
+                <!-- Expanded: Regular Full Time -->
+                <section id="jobs-expanded-reg-ft" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <div>
+                            <button class="btn btn-outline btn-small" onclick="window.switchTab('jobs')" style="margin-bottom:16px;"><i class="ph ph-arrow-left"></i> Back to Talent Marketplace</button>
+                            <h2>Regular Directory: Full Time Roles</h2>
+                            <p>Showing 842 verified salaried open listings.</p>
+                        </div>
+                    </header>
+                    <div class="grid-layout three-col">
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#1E3A8A;"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Backend Architect <i class="ph-fill ph-shield-check company-badge"></i></h3><p>Global Dynamics • NY</p></div></div><div class="job-details"><span>$180k - $220k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary">Apply</button></div></div>
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#D97706;"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Data Scientist <i class="ph-fill ph-shield-check company-badge"></i></h3><p>FinTech Innovate • Remote</p></div></div><div class="job-details"><span>$120k - $150k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary">Apply</button></div></div>
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#059669;"><i class="ph-fill ph-buildings text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Product Manager <i class="ph-fill ph-shield-check company-badge"></i></h3><p>EcoSolutions • SF</p></div></div><div class="job-details"><span>$140k - $170k</span><span>Full Time</span></div><div class="flex-between margin-top"><button class="btn btn-primary">Apply</button></div></div>
+                    </div>
+                </section>
+
+                <!-- Expanded: Smart Match Freelance -->
+                <section id="jobs-expanded-smart-fl" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <div>
+                            <button class="btn btn-outline btn-small" onclick="window.switchTab('jobs')" style="margin-bottom:16px;"><i class="ph ph-arrow-left"></i> Back to Talent Marketplace</button>
+                            <h2 style="color:#4338CA;"><i class="ph-fill ph-magic-wand"></i> Smart Match: Freelance Contracts</h2>
+                            <p style="color:#4F46E5;">Showing 8 highly targeted contracts matching your hourly map.</p>
+                        </div>
+                    </header>
+                    <div class="grid-layout three-col">
+                        <div class="card job-card" style="border-top:2px solid #4338CA;"><div class="flex-row"><div class="company-logo bg-slate" style="background:#4338CA;"><i class="ph-fill ph-code text-white"></i></div><div class="job-info"><h3 class="verified-company-title">React Dashboard Overhaul</h3><p>Acme Corp • Escrow Verified</p></div></div><div class="job-details"><span style="color:#4338CA;">$120 / hr</span><span>3-6 Months</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                        <div class="card job-card" style="border-top:2px solid #4338CA;"><div class="flex-row"><div class="company-logo bg-slate" style="background:#0F172A;"><i class="ph-fill ph-code text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Next.js API Integration</h3><p>Stealth Startup • Escrow Verified</p></div></div><div class="job-details"><span style="color:#4338CA;">$100 / hr</span><span>< 1 Month</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                        <div class="card job-card" style="border-top:2px solid #4338CA;"><div class="flex-row"><div class="company-logo bg-slate" style="background:#10B981;"><i class="ph-fill ph-code text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Bug Fixes (Urgent)</h3><p>Enterprise Client • Escrow Verified</p></div></div><div class="job-details"><span style="color:#4338CA;">$150 / hr</span><span>1 Week</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                    </div>
+                </section>
+
+                <!-- Expanded: Regular Freelance -->
+                <section id="jobs-expanded-reg-fl" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <div>
+                            <button class="btn btn-outline btn-small" onclick="window.switchTab('jobs')" style="margin-bottom:16px;"><i class="ph ph-arrow-left"></i> Back to Talent Marketplace</button>
+                            <h2>Regular Directory: Freelance Contracts</h2>
+                            <p>Showing 204 open contracts requesting proposals.</p>
+                        </div>
+                    </header>
+                    <div class="grid-layout three-col">
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#0F172A;"><i class="ph-fill ph-paint-brush text-white"></i></div><div class="job-info"><h3 class="verified-company-title">UI/UX Designer for MVP</h3><p>Seed Stage Startup</p></div></div><div class="job-details"><span style="color:#4338CA;">$8,000 Fixed</span><span>< 1 Month</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#059669;"><i class="ph-fill ph-pen text-white"></i></div><div class="job-info"><h3 class="verified-company-title">Technical Writer needed</h3><p>Open Source Project</p></div></div><div class="job-details"><span style="color:#4338CA;">$50 / hr</span><span>Ongoing</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                        <div class="card job-card"><div class="flex-row"><div class="company-logo bg-slate" style="background:#D97706;"><i class="ph-fill ph-chart-line-up text-white"></i></div><div class="job-info"><h3 class="verified-company-title">SEO Optimization</h3><p>E-commerce Store</p></div></div><div class="job-details"><span style="color:#4338CA;">$2,500 Fixed</span><span>2 Weeks</span></div><div class="flex-between margin-top"><button class="btn btn-primary" style="background:#4338CA;">Submit Proposal</button></div></div>
+                    </div>
+                </section>
+
+                <!-- ============================================== -->
+                <!-- FUNDING HUB TAB -->
+                <!-- ============================================== -->
+                <section id="funding" class="tab-pane fade-in">
+                    <header class="page-header flex-between">
+                        <div>
+                            <h2>Venture Funding Hub</h2>
+                            <p>Discover startups raising capital or post your own funding request.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('create-modal').classList.add('active'); window.switchCreateView('funding');"><i class="ph ph-rocket-launch"></i> Post Funding Request</button>
+                    </header>
+
+                    <div class="advanced-filters card flex-row">
+                        <select class="filter-dropdown"><option>Company Stage...</option><option>Early Stage Startups</option><option>Existing Companies</option></select>
+                        <select class="filter-dropdown"><option>Funding Round...</option><option>Pre-Seed</option><option>Seed</option><option>Series A</option></select>
+                        <select class="filter-dropdown"><option>Industry...</option><option>AI / DeepTech</option><option>FinTech</option><option>SaaS</option></select>
+                    </div>
+
+                    <!-- Funding Requests Feed -->
+                    <div class="grid-layout two-col margin-top">
+                        <!-- Request 1 -->
+                        <div class="card deal-card">
+                            <div class="deal-header flex-between">
+                                <span class="badge" style="background:#FEF3C7; color:#B45309;"><i class="ph-fill ph-rocket"></i> Pre-Seed Round Open</span>
+                                <strong class="text-main" style="font-size:18px;">$500k Target</strong>
+                            </div>
+                            <div class="margin-top">
+                                <h3 class="verified-company-title">QuantumLedger AI <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                <p class="text-muted" style="font-size:14px; margin-top:4px;">DeepTech / Enterprise SaaS • San Francisco</p>
+                            </div>
+                            <div class="margin-top" style="background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; display:flex; flex-direction:column; gap:8px;">
+                                <div class="flex-between" style="font-size:13px;"><span class="text-muted">Currently Raised:</span> <strong>$150,000 (30%)</strong></div>
+                                <div class="flex-between" style="font-size:13px;"><span class="text-muted">Lead Investor:</span> <strong>Founders Fund (Committed)</strong></div>
+                                <div style="width:100%; height:6px; background:#E2E8F0; border-radius:3px; position:relative; margin-top:4px;">
+                                    <div style="position:absolute; left:0; top:0; height:100%; width:30%; background:#F59E0B; border-radius:3px;"></div>
+                                </div>
+                            </div>
+                            <p class="description margin-top">Building the first enterprise-grade quantum-resistant ledger for tier-1 financial institutions. Looking for strategic angels with fintech experience.</p>
+                            <div class="deal-execution-layer margin-top flex-between">
+                                <button class="btn btn-primary" style="background:#0F172A;">Request Pitch Deck</button>
+                                <span class="text-muted" style="font-size:12px; cursor:pointer;"><i class="ph ph-share-network"></i> Share</span>
+                            </div>
+                        </div>
+
+                        <!-- Request 2 -->
+                        <div class="card deal-card">
+                            <div class="deal-header flex-between">
+                                <span class="badge" style="background:#D1FAE5; color:#065F46;"><i class="ph-fill ph-tree"></i> Seed Round Open</span>
+                                <strong class="text-main" style="font-size:18px;">$2M Target</strong>
+                            </div>
+                            <div class="margin-top">
+                                <h3 class="verified-company-title">EcoLogistics <i class="ph-fill ph-shield-check text-green"></i></h3>
+                                <p class="text-muted" style="font-size:14px; margin-top:4px;">Supply Chain / Climate Tech • Virtual</p>
+                            </div>
+                            <div class="margin-top" style="background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; display:flex; flex-direction:column; gap:8px;">
+                                <div class="flex-between" style="font-size:13px;"><span class="text-muted">Currently Raised:</span> <strong>$1.8M (90%)</strong></div>
+                                <div class="flex-between" style="font-size:13px;"><span class="text-muted">Closing In:</span> <strong style="color:#DC2626;">5 Days</strong></div>
+                                <div style="width:100%; height:6px; background:#E2E8F0; border-radius:3px; position:relative; margin-top:4px;">
+                                    <div style="position:absolute; left:0; top:0; height:100%; width:90%; background:#10B981; border-radius:3px;"></div>
+                                </div>
+                            </div>
+                            <p class="description margin-top">Optimizing last-mile delivery routes to cut carbon emissions by 40% using edge AI. We have huge traction and are closing the round next week.</p>
+                            <div class="deal-execution-layer margin-top flex-between">
+                                <button class="btn btn-primary" style="background:#0F172A;">Contact Founder</button>
+                                <span class="text-muted" style="font-size:12px; cursor:pointer;"><i class="ph ph-share-network"></i> Share</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Services Tab (B2B Exchange) -->
+                <section id="services" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <div>
+                            <h2>B2B Procurement & Services</h2>
+                            <p>Post your product or service needs. Certified vendor companies will bid to sell them to you.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('create-modal').classList.add('active'); window.switchCreateView('request');" style="background:#EF4444;"><i class="ph ph-shopping-bag"></i> Post Procurement Request</button>
+                    </header>
+                    
+                    <div class="advanced-filters card flex-row">
+                        <span class="pill active">All Requests</span>
+                        <span class="pill">Looking for Software/SaaS</span>
+                        <span class="pill">Looking for Agencies</span>
+                        <span class="pill">Looking for Physical Goods</span>
+                    </div>
+                    
+                    <div class="services-layout">
+                        <div class="services-main" style="flex:2">
+                            <div class="card service-request">
+                                <div class="flex-between">
+                                    <span class="badge badge-normal">RFP (Request for Proposal)</span>
+                                    <span class="price-tag">$10,000 Budget Cap</span>
+                                </div>
+                                <h4 style="margin-top:12px; font-size:20px;">Corporate Identity & UX Revamp</h4>
+                                <p class="service-meta margin-top">Posted by <strong class="verified-company-title">Acme Corp <i class="ph-fill ph-shield-check company-badge"></i></strong> • 2 days ago</p>
+                                <p class="description margin-top">Looking for an agency to completely revamp our corporate website and overhaul our SaaS dashboard UX. Deliverables split into 3 milestones.</p>
+                                
+                                <!-- Deal Execution: Proposals -->
+                                <div class="proposal-engine margin-top">
+                                    <div class="execution-steps">
+                                        <div class="step active">1. Requirements</div>
+                                        <div class="step">2. Proposal Review (3 received)</div>
+                                        <div class="step disabled">3. Contract</div>
+                                        <div class="step disabled">4. Escrow & Milestones</div>
+                                    </div>
+                                    <div class="flex-row margin-top">
+                                        <button class="btn btn-primary flex-1" onclick="document.getElementById('proposal-modal').classList.add('active');"><i class="ph ph-paper-plane-right"></i> Draft Proposal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="services-sidebar" style="flex:1">
+                            <h3 class="section-title">Verified Agencies</h3>
+                            <div class="card agency-card margin-top">
+                                <div class="agency-header">
+                                    <div>
+                                        <h4 class="verified-company-title">Creative Nexus <i class="ph-fill ph-shield-check text-blue"></i></h4>
+                                        <div class="rating"><i class="ph-fill ph-star"></i> 4.9 (124) • Trusted Seller</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline btn-full margin-top">Request Quote Direct</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Companies Tab (Directory & Reviews) -->
+                <section id="companies" class="tab-pane fade-in">
+                    <header class="page-header" style="border-bottom:none; margin-bottom:0;">
+                        <h2>Real Reviews from Real Employees</h2>
+                        <p>Explore verified ratings, salaries, and corporate culture data.</p>
+                        
+                        <div class="search-bar margin-top" style="max-width:100%; border:1px solid var(--border); box-shadow:none; padding:12px;">
+                            <i class="ph ph-magnifying-glass text-muted"></i>
+                            <input type="text" placeholder="Search companies, industries..." style="font-size:15px;">
+                            <i class="ph ph-funnel text-muted" style="cursor:pointer;"></i>
+                        </div>
+                        
+                        <div class="flex-row gap-small margin-top" style="overflow-x:auto; padding-bottom:4px;">
+                            <span class="pill" style="background:#1D4ED8; color:white; border:none; padding:8px 16px; font-weight:600; cursor:pointer;">All</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">IT Services</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">E-Commerce</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">Food Tech</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">FinTech</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">Manufacturing</span>
+                            <span class="pill" style="padding:8px 16px; font-weight:500; cursor:pointer;">Healthcare</span>
+                        </div>
+                    </header>
+                    
+                    <!-- Top Level Stats Grid -->
+                    <div class="grid-layout three-col margin-top" style="margin-bottom:24px;">
+                        <div class="card stat-card" style="padding:20px; align-items:center;">
+                            <div style="background:rgba(59,130,246,0.15); padding:12px; border-radius:8px;"><i class="ph-fill ph-buildings text-blue" style="font-size:24px; margin:0;"></i></div>
+                            <div class="stat-info" style="margin-left:16px;">
+                                <h3 style="font-size:24px; font-weight:700;">6</h3>
+                                <p style="font-size:13px; color:var(--text-muted); font-weight:500;">Companies Listed</p>
+                            </div>
+                        </div>
+                        <div class="card stat-card" style="padding:20px; align-items:center;">
+                            <div style="background:rgba(59,130,246,0.15); padding:12px; border-radius:8px;"><i class="ph-fill ph-star text-blue" style="font-size:24px; margin:0;"></i></div>
+                            <div class="stat-info" style="margin-left:16px;">
+                                <h3 style="font-size:24px; font-weight:700;">192K+</h3>
+                                <p style="font-size:13px; color:var(--text-muted); font-weight:500;">Total Reviews</p>
+                            </div>
+                        </div>
+                        <div class="card stat-card" style="padding:20px; align-items:center;">
+                            <div style="background:rgba(59,130,246,0.15); padding:12px; border-radius:8px;"><i class="ph-fill ph-trend-up text-blue" style="font-size:24px; margin:0;"></i></div>
+                            <div class="stat-info" style="margin-left:16px;">
+                                <h3 style="font-size:24px; font-weight:700;">4.0</h3>
+                                <p style="font-size:13px; color:var(--text-muted); font-weight:500;">Avg. Rating</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Cards Directory -->
+                    <div class="grid-layout two-col">
+                        
+                        <!-- TCR / TCS Card -->
+                        <div class="card company-card" style="transition:transform 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                            <div class="flex-row" style="gap:16px; margin-bottom:12px;">
+                                <div class="company-logo" style="width:56px; height:56px; background:#3B82F6; color:white; font-size:16px; font-weight:700; border-radius:12px;">TCS</div>
+                                <div>
+                                    <h3 class="verified-company-title" style="font-size:18px;">Tata Consultancy Services <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                    <span class="text-muted" style="font-size:13px; font-weight:500;">IT Services</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                <div style="color:#F59E0B; display:flex; gap:2px; font-size:16px;"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i><i class="ph ph-star"></i></div>
+                                <span style="font-weight:700; font-size:15px;">3.9</span>
+                                <span class="text-muted" style="font-size:13px;">(84,200 reviews)</span>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px; font-size:13px; color:var(--text-muted); font-weight:500;">
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-map-pin"></i> Mumbai, India</span>
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-users"></i> 500,000+ employees</span>
+                            </div>
+
+                            <div class="flex-between" style="font-size:13px; font-weight:700;">
+                                <span style="color:#10B981;">72% recommend</span>
+                                <span style="color:var(--text-muted);">80% CEO approval</span>
+                            </div>
+                        </div>
+
+                        <!-- Infosys Card -->
+                        <div class="card company-card" style="transition:transform 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'" onclick="window.switchTab('company-detail')">
+                            <div class="flex-row" style="gap:16px; margin-bottom:12px;">
+                                <div class="company-logo" style="width:56px; height:56px; background:#6366F1; color:white; font-size:15px; font-weight:700; border-radius:12px;">INFY</div>
+                                <div>
+                                    <h3 class="verified-company-title" style="font-size:18px;">Infosys <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                    <span class="text-muted" style="font-size:13px; font-weight:500;">IT Services</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                <div style="color:#F59E0B; display:flex; gap:2px; font-size:16px;"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i><i class="ph ph-star"></i></div>
+                                <span style="font-weight:700; font-size:15px;">3.7</span>
+                                <span class="text-muted" style="font-size:13px;">(62,000 reviews)</span>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px; font-size:13px; color:var(--text-muted); font-weight:500;">
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-map-pin"></i> Bangalore, India</span>
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-users"></i> 350,000+ employees</span>
+                            </div>
+
+                            <div class="flex-between" style="font-size:13px; font-weight:700;">
+                                <span style="color:#10B981;">68% recommend</span>
+                                <span style="color:var(--text-muted);">75% CEO approval</span>
+                            </div>
+                        </div>
+
+                        <!-- Flipkart Card -->
+                        <div class="card company-card" style="transition:transform 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                            <div class="flex-row" style="gap:16px; margin-bottom:12px;">
+                                <div class="company-logo" style="width:56px; height:56px; background:#F59E0B; color:white; font-size:16px; font-weight:700; border-radius:12px;">FK</div>
+                                <div>
+                                    <h3 class="verified-company-title" style="font-size:18px;">Flipkart <i class="ph-fill ph-seal-check text-blue"></i></h3>
+                                    <span class="text-muted" style="font-size:13px; font-weight:500;">E-Commerce</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                                <div style="color:#F59E0B; display:flex; gap:2px; font-size:16px;"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph ph-star"></i></div>
+                                <span style="font-weight:700; font-size:15px;">4.1</span>
+                                <span class="text-muted" style="font-size:13px;">(18,400 reviews)</span>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px; font-size:13px; color:var(--text-muted); font-weight:500;">
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-map-pin"></i> Bangalore, India</span>
+                                <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-users"></i> 50,000+ employees</span>
+                            </div>
+
+                            <div class="flex-between" style="font-size:13px; font-weight:700;">
+                                <span style="color:#10B981;">81% recommend</span>
+                                <span style="color:var(--text-muted);">88% CEO approval</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Company Profile Tab -->
+                <section id="company-detail" class="tab-pane fade-in">
+                    <header class="page-header flex-between" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+                        <button class="btn btn-outline btn-small" onclick="window.switchTab('companies')"><i class="ph ph-arrow-left"></i> Back to Directory</button>
+                        <button id="btn-edit-company" class="btn btn-primary btn-small" style="background:#2563EB;" onclick="window.openEditCompanyModal('all')"><i class="ph ph-pencil-simple"></i> Edit Company Profile</button>
+                    </header>
+                    
+                    <!-- Company Hero Header -->
+                    <div class="flex-between" style="margin-bottom:32px;">
+                        <div class="flex-row" style="gap:24px;">
+                            <div class="company-logo" style="width:80px; height:80px; background:#6366F1; color:white; font-size:24px; font-weight:700; border-radius:16px;">INFY</div>
+                            <div>
+                                <h2 class="verified-company-title" style="font-size:28px;"><span id="comp-prof-name">Company Name</span> <i class="ph-fill ph-seal-check text-blue" style="font-size:24px;"></i></h2>
+                                <div style="display:flex; flex-wrap:wrap; gap:16px; margin-top:12px; font-size:13px; color:var(--text-muted); font-weight:500;">
+                                    <span style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="window.openEditCompanyModal('industry')"><i class="ph ph-briefcase"></i> <span id="comp-prof-industry" style="color:var(--text-main); font-weight:600;">Add Industry</span></span>
+                                    <a id="comp-prof-website-link" href="#" style="display:flex; align-items:center; gap:6px; color:#2563EB; font-weight:600; text-decoration:none;"><i class="ph ph-globe"></i> <span id="comp-prof-website" onclick="if(this.innerText.includes('Add')) { event.preventDefault(); window.openEditCompanyModal('website'); }"><i class="ph-fill ph-plus-circle"></i> Add Website</span></a>
+                                    <a id="comp-prof-linkedin-link" href="#" style="display:flex; align-items:center; gap:6px; color:#0A66C2; font-weight:600; text-decoration:none;"><i class="ph ph-linkedin-logo"></i> <span id="comp-prof-linkedin" onclick="if(this.innerText.includes('Add')) { event.preventDefault(); window.openEditCompanyModal('linkedin'); }"><i class="ph-fill ph-plus-circle"></i> Add LinkedIn</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <h3 style="font-size:36px; font-weight:700; margin-bottom:4px;">3.7</h3>
+                            <div style="color:#F59E0B; display:flex; gap:2px; font-size:18px; justify-content:flex-end; margin-bottom:4px;"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i><i class="ph ph-star"></i></div>
+                            <span class="text-muted" style="font-size:13px; font-weight:500;">62,000 reviews</span>
+                        </div>
+                    </div>
+
+                    <!-- Corporate Identity Data Bar -->
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; margin:24px 0;">
+                        <div class="card" style="padding:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); cursor:pointer;" onclick="window.openEditCompanyModal('gst')">
+                            <label style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">GST (Verified)</label>
+                            <p id="comp-prof-gst" style="font-size:14px; font-weight:600; color:#10B981;"><i class="ph-fill ph-plus-circle"></i> Add GST</p>
+                        </div>
+                        <div class="card" style="padding:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); cursor:pointer;" onclick="window.openEditCompanyModal('type')">
+                            <label style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Business Type</label>
+                            <p id="comp-prof-type" style="font-size:14px; font-weight:600;"><i class="ph-fill ph-plus-circle"></i> Add Type</p>
+                        </div>
+                        <div class="card" style="padding:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); cursor:pointer;" onclick="window.openEditCompanyModal('email')">
+                            <label style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Business Email</label>
+                            <p id="comp-prof-email" style="font-size:14px; font-weight:600;"><i class="ph-fill ph-plus-circle"></i> Add Email</p>
+                        </div>
+                        <div class="card" style="padding:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); cursor:pointer;" onclick="window.openEditCompanyModal('years')">
+                            <label style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">Established</label>
+                            <p style="font-size:14px; font-weight:600;"><span id="comp-prof-years"><i class="ph-fill ph-plus-circle"></i> Add Years</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Company Overview Card -->
+                    <div class="card margin-bottom" style="padding:24px; border-left:4px solid #3B82F6; cursor:pointer;" onclick="window.openEditCompanyModal('desc')">
+                        <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">Organization Overview</h3>
+                        <p id="comp-prof-desc" style="font-size:15px; line-height:1.6; color:#475569;"><i class="ph ph-plus-circle"></i> Add organization overview and short description...</p>
+                    </div>
+
+                    <div class="grid-layout" style="grid-template-columns: 1fr 2fr; gap:24px;">
+                        
+                        <!-- Left Column: Metrics -->
+                        <div style="display:flex; flex-direction:column; gap:24px;">
+                            
+                            <!-- Rating Breakdown -->
+                            <div class="card" style="padding:24px;">
+                                <h3 style="font-size:16px; margin-bottom:20px;">Rating Breakdown</h3>
+                                <div style="display:flex; flex-direction:column; gap:16px;">
+                                    <div class="flex-between" style="font-size:13px; color:var(--text-muted); font-weight:500;">
+                                        <span style="width:120px;">Salary & Benefits</span>
+                                        <div style="flex:1; height:6px; background:#E2E8F0; border-radius:3px; margin:0 12px; position:relative;">
+                                            <div style="position:absolute; left:0; top:0; height:100%; width:68%; background:#3B82F6; border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-weight:700; color:var(--text-main);">3.4</span>
+                                    </div>
+                                    <div class="flex-between" style="font-size:13px; color:var(--text-muted); font-weight:500;">
+                                        <span style="width:120px;">Work-Life Balance</span>
+                                        <div style="flex:1; height:6px; background:#E2E8F0; border-radius:3px; margin:0 12px; position:relative;">
+                                            <div style="position:absolute; left:0; top:0; height:100%; width:70%; background:#3B82F6; border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-weight:700; color:var(--text-main);">3.5</span>
+                                    </div>
+                                    <div class="flex-between" style="font-size:13px; color:var(--text-muted); font-weight:500;">
+                                        <span style="width:120px;">Culture & Values</span>
+                                        <div style="flex:1; height:6px; background:#E2E8F0; border-radius:3px; margin:0 12px; position:relative;">
+                                            <div style="position:absolute; left:0; top:0; height:100%; width:72%; background:#3B82F6; border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-weight:700; color:var(--text-main);">3.6</span>
+                                    </div>
+                                    <div class="flex-between" style="font-size:13px; color:var(--text-muted); font-weight:500;">
+                                        <span style="width:120px;">Career Growth</span>
+                                        <div style="flex:1; height:6px; background:#E2E8F0; border-radius:3px; margin:0 12px; position:relative;">
+                                            <div style="position:absolute; left:0; top:0; height:100%; width:72%; background:#3B82F6; border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-weight:700; color:var(--text-main);">3.6</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Employee Sentiment -->
+                            <div class="card" style="padding:24px;">
+                                <h3 style="font-size:16px; margin-bottom:20px;">Employee Sentiment</h3>
+                                <div style="display:flex; flex-direction:column; gap:20px;">
+                                    <div>
+                                        <div class="flex-between" style="margin-bottom:8px; font-size:13px; color:var(--text-muted); font-weight:500;">
+                                            <span style="display:flex; align-items:center; gap:6px;"><i class="ph ph-thumbs-up text-green" style="font-size:16px;"></i> Recommend to a friend</span>
+                                            <span style="font-weight:700; color:var(--text-main);">68%</span>
+                                        </div>
+                                        <div style="width:100%; height:6px; background:#E2E8F0; border-radius:3px; position:relative;">
+                                            <div style="position:absolute; left:0; top:0; height:100%; width:68%; background:#10B981; border-radius:3px;"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column: Employee Reviews -->
+                        <div>
+                            <div class="flex-between" style="margin-bottom:20px;">
+                                <h3 style="font-size:20px;">Employee Reviews</h3>
+                                <button class="btn btn-outline" style="border-color:#3B82F6; color:#1D4ED8;"><i class="ph ph-plus"></i> Write Review</button>
+                            </div>
+
+                            <!-- Review Card 1 -->
+                            <div class="card" style="padding:24px; margin-bottom:16px;">
+                                <div class="flex-between" style="margin-bottom:12px;">
+                                    <h4 style="font-size:16px; font-weight:700;">Solid foundation for your career</h4>
+                                    <div style="display:flex; align-items:center; gap:4px; font-size:14px; font-weight:700; color:#F59E0B;">
+                                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph ph-star"></i> 4.0
+                                    </div>
+                                </div>
+                                <span class="text-muted" style="font-size:13px; font-weight:500; display:block; margin-bottom:16px;">Business Analyst • April 2026</span>
+                                
+                                <div style="margin-bottom:12px;">
+                                    <h5 style="color:#10B981; font-size:14px; margin-bottom:4px; display:flex; align-items:center; gap:6px;"><i class="ph ph-thumbs-up"></i> Pros</h5>
+                                    <p style="font-size:14px; color:var(--text-main); line-height:1.5;">Great onboarding via Mysuru campus. Access to InfyTQ and learning portals. Diverse exposure to huge enterprise environments and architectures.</p>
+                                </div>
+                                
+                                <div style="margin-bottom:20px;">
+                                    <h5 style="color:#EF4444; font-size:14px; margin-bottom:4px; display:flex; align-items:center; gap:6px;"><i class="ph ph-thumbs-down"></i> Cons</h5>
+                                    <p style="font-size:14px; color:var(--text-main); line-height:1.5;">Growth depends heavily on your manager. Bench periods can be demotivating if you want to ship production code quickly.</p>
+                                </div>
+
+                                <div class="flex-between" style="border-top:1px solid var(--border); padding-top:16px;">
+                                    <span style="font-size:13px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; gap:6px;"><i class="ph ph-thumbs-up"></i> 102 found helpful</span>
+                                    <span style="font-size:13px; color:#3B82F6; font-weight:600; cursor:pointer;">Read more <i class="ph ph-caret-down"></i></span>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align:center; padding:16px;">
+                                <span style="font-size:14px; font-weight:600; color:var(--text-main); cursor:pointer;">Load more reviews</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Events Tab -->
+                <section id="events" class="tab-pane fade-in">
+                    <header class="page-header flex-between">
+                        <div>
+                            <h2>Professional Events</h2>
+                            <p>Discover industry summits, virtual mixers, and verified meetups.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="document.getElementById('btn-universal-create').click()"><i class="ph ph-plus"></i> Host Event</button>
+                    </header>
+                    
+                    <div class="grid-layout three-col margin-top">
+                        <div class="card event-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background:linear-gradient(135deg, #1E3A8A, #1D4ED8); position:relative;">
+                                <div style="position:absolute; top:12px; right:12px; background-color: transparent; padding:6px 10px; border-radius:6px; text-align:center;">
+                                    <span style="display:block; font-size:18px; font-weight:700; color:var(--trust-blue); line-height:1;">24</span>
+                                    <span style="font-size:10px; font-weight:700; color:var(--text-muted);">OCT</span>
+                                </div>
+                            </div>
+                            <div style="padding:20px;">
+                                <span class="badge badge-trust" style="background:#DBEAFE; color:#1E3A8A; display:inline-block; margin-bottom:12px;">Virtual Summit</span>
+                                <h3 style="font-size:18px; margin-bottom:8px;">B2B SaaS Growth 2026</h3>
+                                <p class="text-muted" style="font-size:13px; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><i class="ph ph-map-pin"></i> Hosted on Webex</p>
+                                <p class="text-muted" style="font-size:13px; display:flex; align-items:center; gap:6px;"><i class="ph ph-users"></i> 1,200 Attendees</p>
+                                
+                                <div class="margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                                    <p style="font-size:12px; font-weight:600; color:var(--text-main); margin-bottom:8px;">Hosted by <span class="verified-company-title">TechNova <i class="ph-fill ph-shield-check text-slate"></i></span></p>
+                                    <button class="btn btn-outline btn-full text-blue">RSVP & Ticketing</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Detail / Ticketing Mock -->
+                        <div class="card" style="grid-column: span 2;">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Active Event Management</span>
+                            <h3 class="margin-top" style="font-size:22px;">Founder Mentorship Mixer <i class="ph-fill ph-seal-check text-blue" title="Verified Host"></i></h3>
+                            <p class="text-muted margin-top" style="font-size:14px; line-height:1.6;">An exclusive invite-only mixer for seed-stage B2B founders to network with active Series A investors.</p>
+                            
+                            <div class="grid-layout two-col margin-top" style="gap:16px;">
+                                <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+                                    <h4 style="font-size:14px; margin-bottom:12px;">Ticketing Status</h4>
+                                    <div class="progress-bar" style="width:100%;"><div class="progress-fill blue" style="width:90%"></div></div>
+                                    <p class="text-muted" style="font-size:12px; margin-top:8px;">45 / 50 Slots Booked</p>
+                                </div>
+                                <div style="background:rgba(0,0,0,0.2); padding:16px; border-radius:8px; border:1px solid var(--border);">
+                                    <h4 style="font-size:14px; margin-bottom:12px;">Attendee Networking</h4>
+                                    <div class="flex-row gap-small">
+                                        <img src="https://i.pravatar.cc/150?img=11" class="avatar-sm">
+                                        <img src="https://i.pravatar.cc/150?img=22" class="avatar-sm">
+                                        <img src="https://i.pravatar.cc/150?img=33" class="avatar-sm">
+                                        <span style="font-size:12px; font-weight:600; color:var(--text-muted);">+ 42 others</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="margin-top flex-row py-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                                <button class="btn btn-primary" style="background:#166534;"><i class="ph ph-ticket"></i> Purchase VIP Slot ($99)</button>
+                                <button class="btn btn-outline"><i class="ph ph-chat-circle"></i> View Discussion Board</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inbox (Detailed Messaging UI) -->
+                <section id="messages" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Inbox</h2>
+                        <p>Manage Deal negotiations, Hiring conversations, and Network chats.</p>
+                    </header>
+                    
+                    <div class="card" style="padding:0; display:flex; height:600px; overflow:hidden;">
+                        <!-- Thread List (Left Pane) -->
+                        <div style="width:320px; border-right:1px solid var(--border); display:flex; flex-direction:column; background:rgba(0,0,0,0.2);">
+                            <div style="padding:16px; border-bottom:1px solid var(--border);">
+                                <input type="text" placeholder="Search messages..." style="width:100%; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none;">
+                                <div class="flex-row gap-small margin-top">
+                                    <span class="pill active" style="font-size:11px; padding:4px 10px;">Deals (1)</span>
+                                    <span class="pill" style="font-size:11px; padding:4px 10px;">Hiring (2)</span>
+                                </div>
+                            </div>
+                            <div style="flex:1; overflow-y:auto;">
+                                <!-- Active Thread -->
+                                <div style="padding:16px; background-color: transparent; border-left:4px solid var(--deal-green); cursor:pointer; border-bottom:1px solid var(--border);">
+                                    <div class="flex-between">
+                                        <h4 class="verified-company-title" style="font-size:14px;">EcoLogix Seed Deal</h4>
+                                        <span style="font-size:11px; color:var(--text-muted);">10:42 AM</span>
+                                    </div>
+                                    <p style="font-size:12px; font-weight:600; color:var(--text-main); margin-top:4px;">Draft Term Sheet Attached</p>
+                                    <p style="font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Please review the valuation cap before we proceed to escrow.</p>
+                                </div>
+                                <!-- Innactive Thread -->
+                                <div style="padding:16px; cursor:pointer; border-bottom:1px solid var(--border);">
+                                    <div class="flex-between">
+                                        <h4 class="verified-human" style="font-size:14px;">David Park <i class="ph-fill ph-seal-check"></i></h4>
+                                        <span style="font-size:11px; color:var(--text-muted);">Yesterday</span>
+                                    </div>
+                                    <p style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:4px;">Regarding the Lead React Dev Role</p>
+                                    <p style="font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">I've submitted my GitHub repository for the code test.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Chat Window (Right Pane) -->
+                        <div style="flex:1; display:flex; flex-direction:column; position:relative;">
+                            <!-- Chat Header -->
+                            <div class="flex-between" style="padding:16px 24px; border-bottom:1px solid var(--border); background-color: transparent;">
+                                <div>
+                                    <h3 class="verified-company-title" style="font-size:16px;">EcoLogix Supply Chain <i class="ph-fill ph-shield-check text-slate"></i></h3>
+                                    <span style="font-size:12px; color:var(--deal-green); font-weight:600; display:flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; background:var(--deal-green); border-radius:50%; display:inline-block;"></span> Deal Active: Seed Negotiation (Stage 2)</span>
+                                </div>
+                                <button class="btn btn-outline btn-small"><i class="ph ph-dots-three-circle"></i> Deal Details</button>
+                            </div>
+                            
+                            <!-- Chat History / Timeline -->
+                            <div style="flex:1; padding:24px; overflow-y:auto; background:transparent;">
+                                <div style="text-align:center; margin-bottom:24px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); background:rgba(255,255,255,0.05); padding:4px 12px; border-radius:12px;">STAGE 1: INTEREST INITIATED - OCT 12</span>
+                                </div>
+                                
+                                <!-- Incoming Msg -->
+                                <div style="display:flex; gap:12px; margin-bottom:24px;">
+                                    <div class="company-logo bg-slate" style="width:36px; height:36px; font-size:18px;"><i class="ph-fill ph-buildings text-white"></i></div>
+                                    <div>
+                                        <span style="font-size:13px; font-weight:600;">EcoLogix Team <span style="color:var(--text-muted); font-weight:400; margin-left:8px; font-size:11px;">10:05 AM</span></span>
+                                        <div style="background:rgba(255,255,255,0.05); padding:12px 16px; border-radius:0 12px 12px 12px; margin-top:4px; font-size:14px; color:#1E293B;">
+                                            Thanks for proposing the intro meeting! We've attached our updated data room and preliminary term sheet for the $1.5M round. Let us know if the valuation cap aligns with your thesis.
+                                        </div>
+                                        <!-- Attachment UI -->
+                                        <div style="display:flex; align-items:center; gap:12px; margin-top:8px; background-color: transparent; border:1px solid var(--border); padding:8px 12px; border-radius:8px; display:inline-flex;">
+                                            <i class="ph ph-file-pdf" style="font-size:24px; color:#E21D48;"></i>
+                                            <div>
+                                                <span style="font-size:13px; font-weight:600; display:block;">Draft_Term_Sheet.pdf</span>
+                                                <span style="font-size:11px; color:var(--text-muted);">2.4 MB • Watermarked</span>
+                                            </div>
+                                            <i class="ph ph-download-simple" style="color:var(--text-muted); cursor:pointer; margin-left:8px;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="text-align:center; margin-bottom:24px;">
+                                    <span style="font-size:11px; font-weight:700; color:#166534; background:#DCFCE7; padding:4px 12px; border-radius:12px;">STAGE 2: NEGOTIATION (CURRENT)</span>
+                                </div>
+                                
+                                <!-- Outgoing Msg -->
+                                <div style="display:flex; flex-direction:row-reverse; gap:12px; margin-bottom:24px;">
+                                    <img src="https://i.pravatar.cc/150?img=68" class="avatar-sm" style="width:36px; height:36px;">
+                                    <div style="align-items:flex-end; display:flex; flex-direction:column;">
+                                        <span style="font-size:13px; font-weight:600;"><span style="color:var(--text-muted); font-weight:400; margin-right:8px; font-size:11px;">10:42 AM</span> You</span>
+                                        <div style="background:var(--deal-green); color:white; padding:12px 16px; border-radius:12px 0 12px 12px; margin-top:4px; font-size:14px;">
+                                            Reviewing now. I'll get back to you shortly but the numbers look solid. Are you targeting a close by end of Q4?
+                                        </div>
+                                        <span style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="ph-fill ph-check-circle text-blue"></i> Read</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Chat Input -->
+                            <div style="padding:16px 24px; border-top:1px solid var(--border); background:rgba(0,0,0,0.2); display:flex; gap:12px; align-items:center;">
+                                <i class="ph ph-paperclip" style="font-size:24px; color:var(--text-muted); cursor:pointer;"></i>
+                                <input type="text" placeholder="Type your message..." style="flex:1; padding:10px 16px; border-radius:20px; border:1px solid var(--border); outline:none;">
+                                <button class="btn btn-primary" style="background:#166534;"><i class="ph-fill ph-paper-plane-tilt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TRUST CENTER (The Backbone) -->
+                <section id="trust-center" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2 class="text-blue"><i class="ph-fill ph-shield-check"></i> Trust Center</h2>
+                        <p>Your authoritative identity dashboard. Crucial for platform access.</p>
+                    </header>
+                    <div class="grid-layout two-col">
+                        
+                        <!-- Face Verification System UI Mock -->
+                        <div class="card verification-card">
+                            <h3 class="flex-row" style="margin-bottom:16px;">
+                                <i class="ph-fill ph-user focus-icon text-blue"></i> Human Identity
+                            </h3>
+                            
+                            <div class="camera-mock">
+                                <div class="camera-frame">
+                                    <div class="face-outline"></div>
+                                </div>
+                                <div class="liveness-prompt">
+                                    <i class="ph-fill ph-spinner-gap"></i> Please look directly at the camera to verify liveness.
+                                </div>
+                                <button class="btn btn-primary margin-top btn-full"><i class="ph ph-camera"></i> Start Face Capture</button>
+                            </div>
+                            
+                            <ul class="checklist margin-top" style="margin-top:24px;">
+                                <li><i class="ph-fill ph-check-circle text-green"></i> Duplicate Detection: PASSED</li>
+                                <li><i class="ph-fill ph-check-circle text-green"></i> Email Verification: PASSED</li>
+                                <li><i class="ph ph-circle text-slate"></i> Face Biometrics: ACTION REQUIRED</li>
+                            </ul>
+                        </div>
+
+                        <!-- Company Verification System UI -->
+                        <div class="card verification-card">
+                            <h3 class="flex-row" style="margin-bottom:16px;">
+                                <i class="ph-fill ph-buildings focus-icon text-slate"></i> Corporate Identity
+                            </h3>
+                            <div class="upload-mock text-center" style="background:rgba(0,0,0,0.2); padding:32px; border:1px dashed #CBD5E1; border-radius:12px;">
+                                <i class="ph ph-file-pdf" style="font-size:48px; color:#94A3B8;"></i>
+                                <h4 style="margin-top:12px;">Upload Business Registry</h4>
+                                <p class="text-muted" style="font-size:12px; margin-top:8px;">Submit your Articles of Incorporation or Tax ID documentation for API validation.</p>
+                                <button class="btn btn-outline margin-top"><i class="ph ph-upload"></i> Select Document</button>
+                            </div>
+
+                            <p class="margin-top" style="font-size:13px; color:#475569;">Verifying your company attaches the <i class="ph-fill ph-shield-check text-blue"></i> badge to your org and allows you to post Jobs and Services.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Promotion Studio -->
+                <section id="promotion-studio" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Promotion Studio</h2>
+                    </header>
+                    <!-- Advanced Targeting Engine -->
+                    <div class="card">
+                        <h3>Smart Targeting Engine</h3>
+                        <p class="text-muted" style="margin-bottom:16px;">Filter your ad visibility to highly specific professional segments.</p>
+                        <div class="grid-layout three-col">
+                            <div>
+                                <label style="font-weight:600; font-size:13px; display:block; margin-bottom:8px;">Audience Role</label>
+                                <select class="filter-dropdown" style="width:100%"><option>C-Level Executives</option><option>Directors</option></select>
+                            </div>
+                            <div>
+                                <label style="font-weight:600; font-size:13px; display:block; margin-bottom:8px;">Industry Segment</label>
+                                <select class="filter-dropdown" style="width:100%"><option>B2B SaaS</option><option>Healthcare</option></select>
+                            </div>
+                            <div>
+                                <label style="font-weight:600; font-size:13px; display:block; margin-bottom:8px;">Trust Filter</label>
+                                <div class="flex-row"><input type="checkbox" checked> Verified Humans Only</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary margin-top">Launch Targeted Campaign</button>
+                    </div>
+                </section>
+
+                <!-- Rewards & Referral UI -->
+                <section id="rewards" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Rewards & Referrals</h2>
+                        <p>Grow the ecosystem by inviting verified professionals and earn credits.</p>
+                    </header>
+                    
+                    <div class="grid-layout" style="grid-template-columns: 2fr 1fr;">
+                        <div class="card" style="background:linear-gradient(135deg, #1E293B, #0F172A); color:white;">
+                            <div class="flex-between" style="align-items:flex-start;">
+                                <div>
+                                    <span style="font-size:13px; font-weight:600; color:#94A3B8; text-transform:uppercase;">Current Wallet Balance</span>
+                                    <h1 style="font-size:48px; font-weight:800; color:#FCD34D; margin:4px 0;">450 <span style="font-size:20px; color:white; font-weight:600;">Credits</span></h1>
+                                    <p style="font-size:14px; color:#CBD5E1;">Eqv. to $45.00 in Promotion Studio spend</p>
+                                </div>
+                                <i class="ph-fill ph-gift" style="font-size:64px; color:#F59E0B; opacity:0.8;"></i>
+                            </div>
+                            
+                            <!-- Milestone Tracking -->
+                            <div class="margin-top" style="margin-top:32px; background:rgba(255,255,255,0.1); padding:16px; border-radius:12px;">
+                                <div class="flex-between" style="margin-bottom:8px;">
+                                    <span style="font-size:13px; font-weight:600;">Next Milestone: 10 Verified Invites</span>
+                                    <span style="font-size:13px; font-weight:600; color:#FCD34D;">7 / 10 Completed</span>
+                                </div>
+                                <div class="progress-bar" style="width:100%; height:8px; background:rgba(255,255,255,0.2);"><div class="progress-fill" style="width:70%; background:#F59E0B;"></div></div>
+                                <p style="font-size:12px; color:#94A3B8; margin-top:8px;">Reward: +500 Bonus Credits upon completion</p>
+                            </div>
+                            
+                            <!-- Invite Flow -->
+                            <div class="margin-top" style="margin-top:24px;">
+                                <span style="font-size:12px; font-weight:600; color:#CBD5E1; text-transform:uppercase;">Your Referral Code</span>
+                                <div class="flex-row gap-small margin-top" style="margin-top:8px;">
+                                    <input type="text" value="https://platform.com/ref/sjenkins99" readonly style="flex:1; padding:12px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.2); color:white; font-family:monospace; outline:none;">
+                                    <button class="btn" style="background-color: transparent; color:#0F172A; font-weight:700;"><i class="ph ph-copy"></i> Copy Link</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leaderboard -->
+                        <div class="card">
+                            <h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="ph-fill ph-ranking text-blue"></i> Top Influencers</h3>
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div class="flex-between" style="padding-bottom:12px; border-bottom:1px solid var(--border);">
+                                    <div class="flex-row gap-small">
+                                        <span style="font-weight:800; color:var(--text-muted); width:16px;">1</span>
+                                        <img src="https://i.pravatar.cc/150?img=43" class="avatar-sm">
+                                        <div>
+                                            <span style="font-size:13px; font-weight:600; display:block;">Elena Rossi</span>
+                                            <span style="font-size:11px; color:var(--text-muted);">142 Invites</span>
+                                        </div>
+                                    </div>
+                                    <i class="ph-fill ph-medal" style="color:#F59E0B; font-size:20px;"></i>
+                                </div>
+                                <div class="flex-between" style="padding-bottom:12px; border-bottom:1px solid var(--border);">
+                                    <div class="flex-row gap-small">
+                                        <span style="font-weight:800; color:var(--text-muted); width:16px;">2</span>
+                                        <img src="https://i.pravatar.cc/150?img=12" class="avatar-sm">
+                                        <div>
+                                            <span style="font-size:13px; font-weight:600; display:block;">Marcus Johnson</span>
+                                            <span style="font-size:11px; color:var(--text-muted);">89 Invites</span>
+                                        </div>
+                                    </div>
+                                    <i class="ph-fill ph-medal" style="color:#94A3B8; font-size:20px;"></i>
+                                </div>
+                                <div class="flex-between">
+                                    <div class="flex-row gap-small">
+                                        <span style="font-weight:800; color:var(--text-muted); width:16px;">3</span>
+                                        <img src="https://i.pravatar.cc/150?img=33" class="avatar-sm">
+                                        <div>
+                                            <span style="font-size:13px; font-weight:600; display:block;">You</span>
+                                            <span style="font-size:11px; color:var(--text-muted);">45 Invites</span>
+                                        </div>
+                                    </div>
+                                    <i class="ph-fill ph-medal" style="color:#B45309; font-size:20px;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Events Ticketing UI -->
+                <section id="events" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Events Marketplace</h2>
+                        <p>Purchase secure cryptographic tickets to verified industry events using your Wallet Balance.</p>
+                    </header>
+                    <div id="events-container" class="grid-layout two-col">
+                        <!-- Dynamically filled down from JS -->
+                    </div>
+                </section>
+
+                <!-- Promotion Studio (Upgraded with Live Wallet) -->
+                <section id="promotion" class="tab-pane fade-in">
+                    <header class="page-header">
+                        <h2>Promotion Studio</h2>
+                        <p>Leverage the algorithm to amplify your Deals, Jobs, and Events to targeted verified audiences.</p>
+                    </header>
+
+                    <div class="grid-layout" style="grid-template-columns: 1fr 2fr;">
+                        
+                        <!-- Wallet Panel & Ledger -->
+                        <div class="card">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Decentralized Wallet</span>
+                            <h2 style="font-size:36px; margin-top:8px; display:flex; align-items:center; gap:8px;">
+                                <i class="ph-fill ph-coin text-blue" style="font-size:32px;"></i> <span class="wallet-balance">0</span>
+                            </h2>
+                            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Available Ecosystem Credits</p>
+                            
+                            <div class="margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                                <button class="btn btn-outline btn-full"><i class="ph ph-plus"></i> Buy Credits</button>
+                                <button class="btn btn-outline btn-full margin-top" style="border:none; color:var(--text-muted); padding-top:8px;" onclick="document.querySelector('.nav-item[data-target=\'rewards\']').click()"><i class="ph ph-gift"></i> Earn via Referrals</button>
+                            </div>
+                            
+                            <div class="margin-top" style="border-top:1px solid var(--border); padding-top:16px; margin-top:24px;">
+                                <h4 style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Immutable Ledger</h4>
+                                <div id="wallet-ledger" style="max-height:200px; overflow-y:auto; padding-right:8px;">
+                                    <p style="font-size:13px; color:var(--text-muted);">Syncing with node...</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Active Campaigns / Builder -->
+                        <div class="card">
+                            <div class="flex-between margin-bottom">
+                                <h3>Active Campaigns (1)</h3>
+                                <div class="flex-row gap-small">
+                                    <button class="btn btn-outline btn-small" onclick="document.getElementById('btn-universal-create').click()"><i class="ph ph-rocket"></i> Boost Asset</button>
+                                    <button class="btn btn-primary btn-small" onclick="document.getElementById('create-ad-form').style.display='block'"><i class="ph ph-megaphone"></i> Create Ad</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Inline Create Ad Form (Hidden by default) -->
+                            <div id="create-ad-form" style="display:none; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:16px;">
+                                <div class="flex-between margin-bottom">
+                                    <h4 style="font-size:14px; display:flex; align-items:center; gap:6px;"><i class="ph-fill ph-megaphone text-blue"></i> Launch Sponsored Ad</h4>
+                                    <i class="ph ph-x text-muted" style="cursor:pointer;" onclick="this.parentElement.parentElement.style.display='none'"></i>
+                                </div>
+                                <div class="form-group margin-bottom">
+                                    <label>Ad Headline & Copy</label>
+                                    <input type="text" placeholder="e.g. Revolutionize your Enterprise Security Architecture..." style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                                </div>
+                                <div class="grid-layout two-col margin-bottom">
+                                    <div class="form-group">
+                                        <label>Call to Action (URL)</label>
+                                        <input type="text" placeholder="https://" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                                    </div>
+                                <div class="form-group margin-bottom">
+                                    <label>Upload Ad Picture / Media</label>
+                                    <div style="border:2px dashed var(--border); background-color: transparent; padding:24px; border-radius:8px; text-align:center; color:var(--text-muted); margin-top:4px; font-size:13px; cursor:pointer;">
+                                        <i class="ph ph-image" style="font-size:32px; color:var(--text-main); margin-bottom:8px; display:block;"></i> 
+                                        Click to Upload Related Picture (16:9 ratio recommended)
+                                    </div>
+                                </div>
+                                <div class="form-group margin-bottom">
+                                    <label>Target Audience (Verified Filter)</label>
+                                    <select style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;"><option>CTOs & VPs of Engineering</option><option>Active Investors</option><option>Product Managers</option></select>
+                                </div>
+                                <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                                    <span style="font-size:12px; font-weight:600; color:var(--text-main);">Cost: 100 Credits / Day</span>
+                                    <button class="btn btn-primary" style="background:#1D4ED8;" onclick="this.parentElement.parentElement.style.display='none'"><i class="ph ph-paper-plane-right"></i> Launch Ad Campaign</button>
+                                </div>
+                            </div>
+
+                            <div style="border:1px solid var(--border); border-radius:8px; padding:16px;">
+                                <div class="flex-between">
+                                    <div>
+                                        <span class="badge badge-trust" style="background:#DBEAFE; color:#1E3A8A; margin-bottom:8px; display:inline-block;">Seed Deal Boost</span>
+                                        <h4 style="font-size:15px;"><i class="ph-fill ph-handshake text-blue"></i> EcoLogix Series A Pitch</h4>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <span style="font-size:16px; font-weight:700; color:#10B981;">14,203</span>
+                                        <p style="font-size:11px; color:var(--text-muted);">Verified Impressions</p>
+                                    </div>
+                                </div>
+                                <div class="margin-top" style="background:rgba(255,255,255,0.05); padding:12px; border-radius:6px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; display:block;">Targeting Criteria</span>
+                                    <p style="font-size:13px; font-weight:500;">
+                                        <i class="ph-fill ph-check-circle text-blue"></i> Active Investors  
+                                        <i class="ph-fill ph-check-circle text-blue"></i> Tier 1 Corporate Entities
+                                    </p>
+                                </div>
+                                <div class="margin-top flex-between" style="border-top:1px solid var(--border); padding-top:16px;">
+                                    <span style="font-size:12px; font-weight:600; color:var(--text-main);">Cost: -50 Credits / Day</span>
+                                    <button class="btn btn-outline btn-small" style="color:#EF4444; border-color:#FECACA;">Pause Campaign</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Profile Tab -->
+                <section id="profile" class="tab-pane fade-in">
+                    <div class="card" style="padding:0; overflow:hidden;">
+                        <!-- Banner -->
+                        <div style="height:140px; background:#111827;"></div>
+                        <!-- Profile Header -->
+                        <div style="padding: 24px; position:relative;">
+                            <img src="https://i.pravatar.cc/150?img=68" class="avatar-lg" style="width:120px; height:120px; margin-top:-84px; border:4px solid white; display:block; margin-bottom:16px;">
+                            
+                            <div style="position:absolute; top:24px; right:24px;">
+                                <button class="btn btn-primary" style="background:#2563EB;"><i class="ph ph-pencil-simple"></i> Edit Profile Header</button>
+                            </div>
+                            
+                            <h2 style="font-size:28px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                                <span id="prof-fullname">Your Name</span> <i class="ph ph-pencil-simple" style="font-size:16px; color:var(--text-muted); cursor:pointer;"></i>
+                            </h2>
+                            <p style="color:#3B82F6; font-weight:600; font-size:15px; margin:4px 0; display:flex; align-items:center; gap:6px; cursor:pointer;"><i class="ph ph-briefcase"></i> <span id="prof-job">Add Role</span> at <span id="prof-company">Company</span></p>
+                            <p style="color:var(--text-muted); font-size:14px; display:flex; align-items:center; gap:6px; cursor:pointer;"><i class="ph ph-map-pin"></i> <span id="prof-loc">Add Location</span> • <i class="ph ph-envelope"></i> <span id="prof-email">Email</span></p>
+                            
+                            <!-- Trust Network Block (Biom. and WorkOS removed per user request) -->
+                            <div style="margin-top:24px; padding:16px; border:1px solid var(--border); border-radius:8px; display:flex; gap:32px;">
+                                <div>
+                                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Trust Network</span>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                                        <div style="display:flex;">
+                                            <img src="https://i.pravatar.cc/150?img=11" style="width:24px; height:24px; border-radius:50%; border:2px solid white; margin-left:-8px; position:relative; z-index:3;">
+                                            <img src="https://i.pravatar.cc/150?img=12" style="width:24px; height:24px; border-radius:50%; border:2px solid white; margin-left:-8px; position:relative; z-index:2;">
+                                            <img src="https://i.pravatar.cc/150?img=13" style="width:24px; height:24px; border-radius:50%; border:2px solid white; margin-left:-8px; position:relative; z-index:1;">
+                                        </div>
+                                        <span style="font-size:14px; font-weight:600; color:var(--text-main);">Vouched by 3 Tier-1 Peers</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-top:24px;">
+                        
+                        <div style="display:flex; flex-direction:column; gap:24px;">
+                            <!-- Professional Experience -->
+                            <div>
+                                <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">Professional Experience</h3>
+                                <div style="border:1px dashed var(--border); background:rgba(0,0,0,0.2); border-radius:8px; padding:24px; text-align:left; cursor:pointer;">
+                                    <p id="prof-experience-display" style="font-size:14px; line-height:1.6; color:#1E293B;">No experience summary added yet.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Skills Section -->
+                            <div style="margin-top:24px;">
+                                <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">Core Skills</h3>
+                                <div id="prof-skills-display" style="display:flex; flex-wrap:wrap; gap:8px;">
+                                    <span class="pill">Skill Placeholder</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Education -->
+                            <div style="margin-top:24px;">
+                                <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">Education</h3>
+                                <div style="border:1px dashed var(--border); background:rgba(0,0,0,0.2); border-radius:8px; padding:24px; text-align:center;">
+                                    <span id="prof-edu-display" style="font-size:15px; font-weight:600; color:#1E293B; display:none;"></span>
+                                    <span style="font-size:15px; font-weight:600; color:#1E293B; display:flex; justify-content:center; align-items:center; gap:8px;"><i class="ph ph-graduation-cap" style="font-size:20px; color:#3B82F6;"></i> Verified Academic Record</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Sidebar -->
+                        <div class="card" style="background:rgba(59,130,246,0.15); border-color:#BFDBFE; height:fit-content;">
+                            <h3 style="font-size:16px; font-weight:700; color:#1E3A8A; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="ph-fill ph-magic-wand"></i> Smart Match Radar <i class="ph ph-faders" style="margin-left:auto; color:#3B82F6; cursor:pointer;"></i></h3>
+                            
+                            <div class="form-group margin-bottom">
+                                <label style="font-size:11px; text-transform:uppercase; color:#1E3A8A; font-weight:700;">Current Job Status</label>
+                                <select style="width:100%; padding:10px; border:1px solid #93C5FD; border-radius:6px; color:#1D4ED8; font-weight:600; margin-top:4px; outline:none;">
+                                    <option>Passively Exploring</option>
+                                    <option>Actively Looking</option>
+                                    <option>Not Exploring</option>
+                                </select>
+                                <span style="font-size:11px; color:#3B82F6; display:block; margin-top:4px;">Controls visibility to verified recruiters.</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="font-size:11px; text-transform:uppercase; color:#1E3A8A; font-weight:700;">Target Next Role</label>
+                                <input type="text" value="Senior Engineering Manager" style="width:100%; padding:10px; border:1px solid #93C5FD; border-radius:6px; margin-top:4px; color:#1E293B; outline:none;">
+                                <span style="font-size:11px; color:#3B82F6; display:block; margin-top:4px;">The algorithm uses this to send you specific job cards.</span>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Universal Create Modal Overlay -->
+    <div class="modal-overlay" id="create-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">What would you like to create?</h2>
+                <button class="icon-btn close-modal" onclick="closeModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                
+                <!-- Main Menu View -->
+                <div id="create-view-menu" class="create-grid">
+                    <button class="create-option" onclick="switchCreateView('update')">
+                        <div class="icon-box" style="background:#F3F4F6;">
+                            <i class="ph ph-article" style="color:#3B82F6;"></i>
+                        </div>
+                        <div>
+                            <h4>Post Update</h4>
+                            <p>Share thoughts, articles, or news</p>
+                        </div>
+                    </button>
+                    <button class="create-option" onclick="switchCreateView('event')">
+                        <div class="icon-box" style="background:#F0FDF4;">
+                            <i class="ph ph-calendar-plus" style="color:#10B981;"></i>
+                        </div>
+                        <div>
+                            <h4>Create Event</h4>
+                            <p>Host virtual or in-person events</p>
+                        </div>
+                    </button>
+                    <button class="create-option" onclick="switchCreateView('job')">
+                        <div class="icon-box" style="background:#FAF5FF;">
+                            <i class="ph ph-briefcase" style="color:#8B5CF6;"></i>
+                        </div>
+                        <div>
+                            <h4>Post Job</h4>
+                            <p>Hire talent for your company</p>
+                        </div>
+                    </button>
+
+                </div>
+
+                <!-- 1. Post Update View -->
+                <div id="create-view-update" class="create-form-view" style="display:none;">
+                    <div style="background:rgba(0,0,0,0.2); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:16px; display:flex; gap:12px; align-items:center;">
+                        <i class="ph-fill ph-seal-check text-blue" style="font-size:24px;"></i>
+                        <div>
+                            <span style="font-size:13px; font-weight:600; display:block;">Posting as a Verified Expert</span>
+                            <span style="font-size:11px; color:var(--text-muted);">Your content will be prioritized in the Market Insights feed.</span>
+                        </div>
+                    </div>
+                    <textarea id="create-post-textarea" placeholder="Share a market insight, industry analysis, or verified company news..." style="width:100%; height:120px; border:none; outline:none; resize:none; font-size:16px; font-family:inherit;"></textarea>
+                    
+                    <div class="flex-row gap-small margin-bottom" style="margin-top:12px;">
+                        <span class="pill" style="font-size:11px; padding:4px 10px;"><i class="ph ph-plus"></i> Add Topic Tag</span>
+                    </div>
+
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <div class="flex-row gap-small">
+                            <button class="icon-btn text-blue" title="Attach Media"><i class="ph ph-image"></i></button>
+                            <button class="icon-btn text-muted" title="Attach PDF Report"><i class="ph ph-file-pdf"></i></button>
+                        </div>
+                        <div class="flex-row gap-small">
+                            <button class="btn btn-outline" onclick="switchCreateView('menu')">Cancel</button>
+                            <button id="btn-create-post-sql" class="btn btn-primary" style="background:var(--trust-blue);" onclick="window.submitLivePost()">Publish Insight</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Create Event View (Aligns with Events Tab) -->
+                <div id="create-view-event" class="create-form-view" style="display:none;">
+                    <div class="form-group margin-bottom">
+                        <label>Event Name</label>
+                        <input type="text" placeholder="e.g. Exclusive B2B SaaS Mentorship Mixer" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                    </div>
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Date & Format</label>
+                            <input type="datetime-local" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Ticketing Strategy</label>
+                            <select style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;"><option>Open (Free)</option><option>Paid VIP Slots ($99)</option><option>Invite-Only via Network</option></select>
+                        </div>
+                    </div>
+                    
+                    <!-- Event specific toggles -->
+                    <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:16px; border-radius:8px; margin-bottom:16px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#166534;">
+                            <input type="checkbox" checked> Restrict RSVP to Verified Humans Only 
+                        </label>
+                        <p style="font-size:11px; color:#15803D; margin-top:4px; margin-left:22px;">Filters out spam accounts. Attendees must pass Trust Center liveness checks.</p>
+                    </div>
+
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="switchCreateView('menu')">Back</button>
+                        <button class="btn btn-primary" style="background:#10B981;"><i class="ph ph-calendar-plus"></i> Launch Event</button>
+                    </div>
+                </div>
+
+                <!-- 3. Post Job View (Aligns with Opportunities Tab) -->
+                <div id="create-view-job" class="create-form-view" style="display:none;">
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <div class="flex-between" style="margin-bottom: 4px;">
+                                <label>Target Role</label>
+                                <select id="job-input-tier" class="filter-dropdown" style="padding: 2px 8px; font-size: 11px; height: 24px; background-color: transparent; border-color: var(--trust-blue); color: var(--trust-blue);">
+                                    <option>Full Time</option>
+                                    <option>Freelancing</option>
+                                </select>
+                            </div>
+                            <input type="text" id="job-input-title" placeholder="e.g. Lead React Engineer" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Hiring Entity</label>
+                            <div style="padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px; background:rgba(0,0,0,0.2); display:flex; align-items:center; gap:8px;">
+                                <i class="ph-fill ph-buildings text-slate"></i> <span style="font-weight:600;">Global Dynamics <i class="ph-fill ph-shield-check text-blue"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group margin-bottom">
+                        <label>Target Compensation & Tags</label>
+                        <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+                            <input type="text" id="job-input-salary" placeholder="e.g. $140k" style="width:50%; padding:10px; border:1px solid var(--border); border-radius:6px;">
+                            <input type="text" id="job-input-tags" placeholder="e.g. Remote, UX" style="width:50%; padding:10px; border:1px solid var(--border); border-radius:6px;">
+                        </div>
+                    </div>
+
+                    <!-- Smart Match Distribution Block (Visible in Screenshot) -->
+                    <div style="background:rgba(59,130,246,0.15); border:1px solid #BFDBFE; padding:16px; border-radius:8px; margin-top:20px;">
+                        <span style="font-size:13px; font-weight:700; color:#1E3A8A; display:flex; align-items:center; gap:8px;"><i class="ph ph-magic-wand"></i> Smart Match Distribution</span>
+                        <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:#1D4ED8; margin-top:8px; cursor:pointer;">
+                            <input type="checkbox" checked> Instantly push this role to Top 10% Verified Candidates matching these skills.
+                        </label>
+                    </div>
+
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="switchCreateView('menu')">Back</button>
+                        <button id="btn-submit-job" class="btn btn-primary" style="background:#8B5CF6;" onclick="window.submitLiveJob()">List Role</button>
+                    </div>
+                </div>
+
+                <!-- 4. Edit Company Profile View -->
+                <div id="create-view-edit-company" class="create-form-view" style="display:none;">
+                    <div style="background:rgba(59,130,246,0.15); border:1px solid #BFDBFE; padding:12px; border-radius:8px; margin-bottom:20px; display:flex; gap:12px; align-items:center;">
+                        <i class="ph-fill ph-info text-blue" style="font-size:24px;"></i>
+                        <div style="font-size:13px; color:#1E3A8A; font-weight:500;">
+                            Updating these details will change your public profile instantly.
+                        </div>
+                    </div>
+
+                    <div id="edit-group-name" class="form-group margin-bottom edit-group">
+                        <label>Legal Company Name</label>
+                        <input type="text" id="edit-comp-name" class="auth-input">
+                    </div>
+
+                    <div id="edit-group-desc" class="form-group margin-bottom edit-group">
+                        <label>Short Description (Tagline)</label>
+                        <textarea id="edit-comp-desc" class="auth-input" style="height:60px; resize:none;"></textarea>
+                    </div>
+
+                    <div id="edit-group-industry" class="form-group margin-bottom edit-group">
+                        <label>Industry</label>
+                        <select id="edit-comp-industry" class="auth-input">
+                            <option>IT / SaaS</option>
+                            <option>Manufacturing</option>
+                            <option>FinTech</option>
+                            <option>Healthcare</option>
+                            <option>E-Commerce</option>
+                            <option>Consulting</option>
+                        </select>
+                    </div>
+
+                    <div id="edit-group-type" class="form-group margin-bottom edit-group">
+                        <label>Business Type</label>
+                        <select id="edit-comp-type" class="auth-input">
+                            <option>Private Limited (Pvt Ltd)</option>
+                            <option>LLP</option>
+                            <option>Sole Proprietorship</option>
+                            <option>Public Limited</option>
+                        </select>
+                    </div>
+
+                    <div id="edit-group-email" class="form-group margin-bottom edit-group">
+                        <label>Business Email</label>
+                        <input type="email" id="edit-comp-email" class="auth-input">
+                    </div>
+
+                    <div id="edit-group-gst" class="form-group margin-bottom edit-group">
+                        <label>GST Number</label>
+                        <input type="text" id="edit-comp-gst" class="auth-input" style="font-family:monospace;">
+                    </div>
+
+                    <div id="edit-group-years" class="form-group margin-bottom edit-group">
+                        <label>Years of Operation</label>
+                        <input type="number" id="edit-comp-years" class="auth-input">
+                    </div>
+
+                    <div id="edit-group-website" class="form-group margin-bottom edit-group">
+                        <label>Website URL</label>
+                        <input type="text" id="edit-comp-website" class="auth-input">
+                    </div>
+
+                    <div id="edit-group-linkedin" class="form-group margin-bottom edit-group">
+                        <label>LinkedIn Company Page</label>
+                        <input type="text" id="edit-comp-linkedin" class="auth-input">
+                    </div>
+
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="window.closeModal()">Cancel</button>
+                        <button class="btn btn-primary" style="background:#2563EB;" onclick="window.saveCompanyProfile()">Save Changes</button>
+                    </div>
+                </div>
+
+
+                <!-- 4. Offer Service View (Corporate Services) -->
+                <div id="create-view-offer" class="create-form-view" style="display:none;">
+                    <div class="form-group margin-bottom">
+                        <label>Service Offering (Agency/Consulting)</label>
+                        <input type="text" placeholder="e.g. Enterprise Cloud Security Audit" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                    </div>
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Service Category</label>
+                            <select style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;"><option>Software Architecture</option><option>Legal Counsel</option><option>Growth Marketing</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Attach Corporate Proof (Trust Layer)</label>
+                            <button class="btn btn-outline" style="width:100%; margin-top:4px; padding:10px;"><i class="ph ph-link"></i> Link Verified Case Studies</button>
+                        </div>
+                    </div>
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="switchCreateView('menu')">Back</button>
+                        <button class="btn btn-primary" style="background:#F59E0B; color:white;">Publish Service</button>
+                    </div>
+                </div>
+
+                <!-- 5. Request Service View (RFP Engine) -->
+                <div id="create-view-request" class="create-form-view" style="display:none;">
+                    <div class="form-group margin-bottom">
+                        <label>Request a Product or Service (Procurement RFP)</label>
+                        <textarea placeholder="Outline exactly what you want to buy, the required deliverables, and any specifics so that verified vendors can bid to sell this to you..." style="width:100%; height:100px; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px; resize:none;"></textarea>
+                    </div>
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Estimated Budget (USD)</label>
+                            <input type="text" placeholder="e.g. $10,000 - $25,000" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Vendor Trust Requirement</label>
+                            <select style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;"><option>Tier 1 Corporate Entities Only</option><option>Any Verified Company</option><option>Open Bidding</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group margin-bottom">
+                        <label>Procurement Category</label>
+                        <div class="flex-row gap-small margin-top">
+                            <label><input type="radio" name="proc_type" checked> Digital Service (Agency/Consulting)</label>
+                            <label style="margin-left:16px;"><input type="radio" name="proc_type"> Software/SaaS Product</label>
+                            <label style="margin-left:16px;"><input type="radio" name="proc_type"> Physical Goods/Hardware</label>
+                        </div>
+                    </div>
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="switchCreateView('menu')">Back</button>
+                        <button class="btn btn-primary" style="background:#EF4444; color:white;"><i class="ph ph-shopping-bag"></i> Post Bidding Request</button>
+                    </div>
+                </div>
+
+                <!-- 6. Funding / Partnership View (Aligns with Funding Hub) -->
+                <div id="create-view-funding" class="create-form-view" style="display:none;">
+                    <div class="flex-row gap-small margin-bottom" style="background:#F0FDFA; border:1px solid #CCFBF1; padding:12px; border-radius:8px; color:#0F766E; font-size:13px; font-weight:600;">
+                        <i class="ph-fill ph-seal-check"></i> Funding requests are verified and pushed securely to Active Capital Providers.
+                    </div>
+                    
+                    <div class="grid-layout two-col margin-bottom">
+                        <div class="form-group">
+                            <label>Funding Target Amount (USD)</label>
+                            <input type="text" id="fund-input-target" placeholder="e.g. $500k" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Current Funding Round</label>
+                            <select id="fund-input-round" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                                <option>Seed</option>
+                                <option>Series A</option>
+                                <option>Series B</option>
+                                <option>Series C</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group margin-bottom">
+                        <label>Startup Name & Category Tags</label>
+                        <textarea id="fund-input-tags" placeholder="e.g. Acme Corp - B2B SaaS Ecosystem..." style="width:100%; height:80px; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px; resize:none;"></textarea>
+                    </div>
+
+                    <div class="form-group margin-bottom">
+                        <label>Secure Data Room</label>
+                        <div style="border:2px dashed #0F766E; padding:16px; border-radius:8px; background:#F0FDFA; text-align:center; color:#0F766E; margin-top:4px; font-size:13px; cursor:pointer; font-weight:600;">
+                            <i class="ph ph-lock-key" style="font-size:24px; margin-bottom:4px; display:block;"></i> Attach Pitch Deck & Financials
+                        </div>
+                    </div>
+
+                    <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                        <button class="btn btn-outline" onclick="switchCreateView('menu')">Back</button>
+                        <button id="btn-submit-funding" class="btn btn-primary" style="background:#0F766E; color:white;" onclick="window.submitLiveFunding()"><i class="ph ph-rocket-launch"></i> Submit Request</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Draft Proposal Modal -->
+    <div class="modal-overlay" id="proposal-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 style="font-size: 18px; color:#1E293B;"><i class="ph-fill ph-paper-plane-tilt"></i> Draft Procurement Proposal</h2>
+                <button class="icon-btn close-modal" onclick="window.closeModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div style="background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Replying to Project:</span>
+                    <h4 style="font-size:14px; margin-top:4px;">Corporate Identity & UX Revamp</h4>
+                    <span style="font-size:12px; color:#10B981; font-weight:600;"><i class="ph-fill ph-shield-check"></i> Escrow Funds Verified by Buyer</span>
+                </div>
+                
+                <div class="grid-layout two-col margin-bottom">
+                    <div class="form-group">
+                        <label>Your Bid Amount (USD)</label>
+                        <input type="number" placeholder="e.g. 8500" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Delivery</label>
+                        <select style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px;">
+                            <option>Less than 1 Week</option>
+                            <option>1-3 Weeks</option>
+                            <option>1-3 Months</option>
+                            <option>3+ Months</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group margin-bottom">
+                    <label>Cover Letter / Pitch</label>
+                    <textarea placeholder="Why is your company the best fit for this procurement request? What is your approach?..." style="width:100%; height:120px; padding:10px; border:1px solid var(--border); border-radius:6px; margin-top:4px; resize:none;"></textarea>
+                </div>
+
+                <div class="form-group margin-bottom">
+                    <label>Attachment</label>
+                    <div style="border:1px dashed var(--border); padding:12px; border-radius:6px; background-color: transparent; text-align:center; color:var(--text-muted); margin-top:4px; cursor:pointer;">
+                        <i class="ph ph-file-pdf" style="font-size:20px; vertical-align:middle; margin-right:4px;"></i> Attach Proposal Deck or Case Study (PDF)
+                    </div>
+                </div>
+
+                <div class="flex-between margin-top" style="border-top:1px solid var(--border); padding-top:16px;">
+                    <button class="btn btn-outline" onclick="window.closeModal()">Cancel</button>
+                    <button class="btn btn-primary" style="background:#4338CA; color:white;"><i class="ph ph-paper-plane-right"></i> Submit Proposal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- mandatory KYC Modal -->
+    <div class="modal-overlay" id="kyc-modal" style="z-index: 10000;">
+        <div class="modal-content" style="max-width: 500px; padding: 0;">
+            <div style="background:rgba(180, 83, 9, 0.15); border-bottom:1px solid #FDE68A; padding:24px; text-align:center;">
+                <i class="ph-fill ph-warning-circle" style="font-size:48px; color:#D97706; margin-bottom:12px;"></i>
+                <h2 style="font-size:20px; color:#92400E; margin-bottom:8px;">KYC Verification Required</h2>
+                <p style="font-size:14px; color:#B45309;">To execute transactions, negotiate deals, or request funding, your organization must pass structural verification.</p>
+            </div>
+            
+            <div class="modal-body" style="padding: 24px;">
+                <div class="form-group margin-bottom">
+                    <label>Registered Legal Name (Auto-pulled)</label>
+                    <input type="text" value="Acme Corp Technologies" class="auth-input" readonly style="background:rgba(255,255,255,0.05); color:#94A3B8;">
+                </div>
+                
+                <div class="grid-layout two-col margin-bottom">
+                    <div class="form-group">
+                        <label>Business Type</label>
+                        <input type="text" value="Pvt Ltd" class="auth-input" readonly style="background:rgba(255,255,255,0.05); color:#94A3B8;">
+                    </div>
+                    <div class="form-group">
+                        <label>City / Registration Location</label>
+                        <input type="text" placeholder="e.g. Mumbai, MH" class="auth-input">
+                    </div>
+                </div>
+
+                <div class="grid-layout two-col margin-bottom">
+                    <div class="form-group">
+                        <label>GST Number <span style="color:#EF4444;">*</span></label>
+                        <input type="text" placeholder="22AAAAA0000A1Z5" class="auth-input" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label>CIN (Corporate ID) <span style="color:#EF4444;">*</span></label>
+                        <input type="text" placeholder="U00000MH2000PTC000000" class="auth-input" style="font-family:monospace;">
+                    </div>
+                </div>
+
+                <div class="form-group margin-bottom">
+                    <label>Upload GST Registration Certificate</label>
+                    <div style="border:2px dashed #CBD5E1; padding:20px; border-radius:8px; background:rgba(0,0,0,0.2); text-align:center; color:#64748B; cursor:pointer;">
+                        <i class="ph ph-upload-simple" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+                        <span style="font-weight:600; font-size:13px;">Click to upload PDF or Image</span>
+                    </div>
+                </div>
+
+                <div class="flex-between margin-top" style="padding-top:16px; border-top:1px solid var(--border);">
+                    <button class="btn btn-outline" onclick="document.getElementById('kyc-modal').classList.remove('active');">Do this later</button>
+                    <button class="btn btn-primary" style="background:#1D4ED8;"><i class="ph-fill ph-shield-check"></i> Submit for Verification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Magic Link Auth Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        // Firebase User Config imported from attached codebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1eElN8Gm9IIjw2ow-u2UQGz1qa5e0VuQ",
+            authDomain: "hirex-hack.firebaseapp.com",
+            projectId: "hirex-hack",
+            storageBucket: "hirex-hack.firebasestorage.app",
+            messagingSenderId: "521745231305",
+            appId: "1:521745231305:web:7c6cb99e84e98eb4590c18"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.sendMagicLink = async function(emailId, btnId, msgId, errId) {
+            const emailInput = document.getElementById(emailId);
+            const msgObj = document.getElementById(msgId);
+            const errObj = document.getElementById(errId);
+            const btn = document.getElementById(btnId);
+            
+            if(!emailInput || !emailInput.value) return;
+            const email = emailInput.value.trim();
+            
+            msgObj.style.display = 'none';
+            errObj.style.display = 'none';
+            btn.innerHTML = '<i class="ph ph-spinner" style="animation:spin 1s linear infinite;"></i> Sending...';
+            btn.disabled = true;
+
+            let currentUrl = window.location.href;
+            if(currentUrl.includes('127.0.0.1')) currentUrl = currentUrl.replace('127.0.0.1', 'localhost');
+            if(currentUrl.startsWith('file://')) {
+                errObj.innerText = "Firebase Error: You are opening this file directly from your hard drive. Please run it via a local server (like VS Code Live Server) so Firebase can redirect you.";
+                errObj.style.display = 'block';
+                btn.innerHTML = 'Send Secure Link';
+                btn.disabled = false;
+                return;
+            }
+
+            const actionCodeSettings = {
+                url: currentUrl, // Redirect back to this URL safely
+                handleCodeInApp: true,
+            };
+
+            try {
+                await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+                window.localStorage.setItem('emailForSignIn', email);
+                msgObj.innerText = "Check your inbox for the secure link!";
+                msgObj.style.display = 'block';
+                btn.innerHTML = '<i class="ph-fill ph-check-circle"></i> Link Sent';
+            } catch (err) {
+                console.error(err);
+                errObj.innerText = err.message;
+                errObj.style.display = 'block';
+                btn.innerHTML = 'Send Secure Link';
+                btn.disabled = false;
+            }
+        };
+
+        window.verifyIndivEmail = async function() {
+            const emailInput = document.getElementById('indiv-reg-email');
+            const btn = document.getElementById('btn-indiv-verify');
+            const msgObj = document.getElementById('indiv-reg-msg');
+            const nextBtn = document.getElementById('btn-next-step');
+
+            if(!emailInput || !emailInput.value.includes('@')) {
+                alert("Please enter a valid email address first.");
+                return;
+            }
+            const email = emailInput.value.trim();
+
+            btn.innerHTML = '<i class="ph ph-spinner" style="animation:spin 1s linear infinite;"></i> Sending Firebase Email...';
+            btn.disabled = true;
+
+            let currentUrl = window.location.href;
+            if(currentUrl.includes('127.0.0.1')) currentUrl = currentUrl.replace('127.0.0.1', 'localhost');
+            if(currentUrl.startsWith('file://')) {
+                alert("Firebase Error: You are opening this via a file:// path. Please use VS Code Live Server to test Magic Links.");
+                btn.innerHTML = 'Verify Email Address';
+                btn.disabled = false;
+                return;
+            }
+
+            const actionCodeSettings = {
+                url: currentUrl, // Redirects back to here
+                handleCodeInApp: true,
+            };
+
+            try {
+                await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+                window.localStorage.setItem('emailForSignIn', email);
+                
+                btn.style.display = 'none';
+                msgObj.innerHTML = '<i class="ph-fill ph-check-circle"></i> Magic Link Sent to Inbox!';
+                msgObj.style.display = 'block';
+                
+                if(nextBtn) {
+                    nextBtn.disabled = false;
+                    nextBtn.style.opacity = '1';
+                    nextBtn.style.pointerEvents = 'auto';
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Firebase Error: " + err.message);
+                btn.innerHTML = 'Verify Email Address';
+                btn.disabled = false;
+            }
+        };
+
+        // When the page loads, check if returning from a magic link click
+        window.addEventListener('load', async () => {
+            if (isSignInWithEmailLink(auth, window.location.href)) {
+                let email = window.localStorage.getItem('emailForSignIn');
+                if (!email) {
+                    email = window.prompt('Please provide your email for confirmation');
+                }
+                try {
+                    await signInWithEmailLink(auth, email, window.location.href);
+                    window.localStorage.removeItem('emailForSignIn');
+                    
+                    // Remove url params cleanly
+                    window.history.replaceState(null, '', window.location.pathname);
+                    
+                    // Proceed into the main application via established global function
+                    if(window.enterApplication) {
+                        window.enterApplication();
+                    }
+                } catch (error) {
+                    console.error("Error signing in with email link", error);
+                    alert("Magic link expired or invalid.");
+                }
+            }
+        });
+    </script>
+    <script src="app.js"></script>
+    <!-- HUD Face Authentication Modal -->
+    <div class="modal-overlay" id="biometrics-modal">
+        <div class="modal-content" style="width: 1000px; height: 800px; background: transparent; padding: 0; display:flex; flex-direction:column;">
+            <div class="modal-header" style="background:var(--bg-surface); padding: 16px 24px;">
+                <h2 style="font-size:18px; color:var(--text-main); display:flex; align-items:center; gap:8px;"><i class="ph-fill ph-fingerprint text-blue"></i> Identity Trust Center HUD</h2>
+                <i class="ph ph-x" style="font-size:24px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('biometrics-modal').classList.remove('active')"></i>
+            </div>
+            <div style="flex:1; background:#0B1120;">
+                <iframe src="./secureauth/index.html" style="width:100%; height:100%; border:none;" allow="camera; microphone; fullscreen"></iframe>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+

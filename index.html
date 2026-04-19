@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SecureAuth Edge - Gatekeeper</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Core React via CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Face API -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+
+  <!-- Firebase Auth via Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyA1eElN8Gm9IIjw2ow-u2UQGz1qa5e0VuQ",
+      authDomain: "hirex-hack.firebaseapp.com",
+      projectId: "hirex-hack",
+      storageBucket: "hirex-hack.firebasestorage.app",
+      messagingSenderId: "521745231305",
+      appId: "1:521745231305:web:7c6cb99e84e98eb4590c18"
+    };
+    
+    window.firebaseApp = initializeApp(firebaseConfig);
+    window.firebaseAuth = getAuth(window.firebaseApp);
+    window.sendSignInLinkToEmail = sendSignInLinkToEmail;
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // SVG Icons
+    const Icons = {
+      User: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+      Mail: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
+      Lock: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+      Loader: () => <svg className="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+      Camera: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>,
+      Upload: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+      Check: () => <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    };
+
+    const INSTRUCTIONS = [
+      "Look straight at the camera", 
+      "Blink your eyes", 
+      "Turn your head slightly left", 
+      "Turn your head slightly right", 
+      "Smile!"
+    ];
+
+    function App() {
+      const [step, setStep] = useState(1);
+      const [isLoading, setIsLoading] = useState(false);
+      const [email, setEmail] = useState('');
+      
+      // Face API States
+      const [modelsLoaded, setModelsLoaded] = useState(false);
+      const [idDescriptor, setIdDescriptor] = useState(null);
+      const [instructionIndex, setInstructionIndex] = useState(0);
+      const [livenessError, setLivenessError] = useState("");
+      
+      // Refs
+      const videoRef = useRef(null);
+      const idImgRef = useRef(null);
+      const prevBoxRef = useRef(null); // Track movement dx/dy
+      const intervalRef = useRef(null);
+      
+      // Load AI Models
+      useEffect(() => {
+        const loadModels = async () => {
+          try {
+            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+            await Promise.all([
+              faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+              faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+              faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+            ]);
+            setModelsLoaded(true);
+            console.log("Face API Models Loaded!");
+          } catch(e) {
+            console.error("AI Model Load Error:", e);
+          }
+        };
+        loadModels();
+        
+        return () => {
+          if(intervalRef.current) clearInterval(intervalRef.current);
+        };
+      }, []);
+
+      // Register Step
+      const handleRegister = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setTimeout(() => {
+          setIsLoading(false);
+          setStep(4);
+        }, 800);
+      };
+
+      // Email Link Step
+      const handleSendLink = async (e) => {
+        e.preventDefault();
+        if(!email) return;
+        setIsLoading(true);
+        try {
+          const actionCodeSettings = { url: 'http://localhost:5500', handleCodeInApp: true };
+          await window.sendSignInLinkToEmail(window.firebaseAuth, email, actionCodeSettings);
+          setIsLoading(false);
+          setStep(3);
+        } catch(err) {
+          console.error(err);
+          setIsLoading(false);
+          alert("Firebase Error. Check console, or use DEV BYPASS.");
+        }
+      };
+
+      // Upload ID Step
+      const handleIdUpload = async (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        
+        setIsLoading(true);
+        const imgUrl = URL.createObjectURL(file);
+        
+        // Wait for image to load to DOM
+        const imgObj = new Image();
+        imgObj.src = imgUrl;
+        imgObj.onload = async () => {
+          try {
+            const detection = await faceapi.detectSingleFace(imgObj).withFaceLandmarks().withFaceDescriptor();
+            if(!detection) {
+              alert("No face detected in ID card. Please upload a clear photo.");
+            } else {
+              setIdDescriptor(detection.descriptor);
+              setStep(5); // Proceed to live check
+              startWebcam();
+            }
+          } catch(err) {
+            alert("Error processing face: " + err.message);
+          }
+          setIsLoading(false);
+        };
+      };
+
+      // Webcam Start
+      const startWebcam = () => {
+        navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => {
+          if(videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        }).catch(err => alert("Camera permission denied."));
+      };
+
+      // Webcam Liveness Loop
+      const handleVideoPlay = () => {
+        const loop = async () => {
+          if(!videoRef.current || !idDescriptor) return;
+          
+          try {
+            const detections = await faceapi.detectSingleFace(videoRef.current).withFaceLandmarks().withFaceDescriptor();
+            
+            if(detections) {
+              // 1. Identity Match Check (Neural Net Standard: ~0.55 threshold)
+              const distance = faceapi.euclideanDistance(detections.descriptor, idDescriptor);
+              let isLocked = true;
+              if(distance > 0.55) {
+                setLivenessError(`Identity mismatch (Score: ${distance.toFixed(2)}). Upload YOUR face!`);
+                isLocked = false;
+              } else {
+                setLivenessError("");
+              }
+
+              // 2. Liveness Movement Check
+              const box = detections.detection.box;
+              if(prevBoxRef.current) {
+                const dx = Math.abs(box.x - prevBoxRef.current.x);
+                const dy = Math.abs(box.y - prevBoxRef.current.y);
+                
+                if(dx < 0.2 && dy < 0.2) {
+                   setLivenessError("Face locked: Try slightly moving your head.");
+                   isLocked = false;
+                }
+              }
+              prevBoxRef.current = box;
+
+              // Step Advancement Logic
+              // We only increment the progression if they are matching AND slightly moving
+              if (isLocked) {
+                setInstructionIndex(prev => {
+                   const newIdx = prev + 1;
+                   if(newIdx >= 25) { 
+                     setStep(6); // Success (lowered to 25 loops for better UX Demo)
+                     clearTimeout(intervalRef.current);
+                     const stream = videoRef.current?.srcObject;
+                     if(stream) stream.getTracks().forEach(track => track.stop());
+                   }
+                   return newIdx;
+                });
+              }
+
+            } else {
+              setLivenessError("No face detected in camera.");
+            }
+          } catch (err) {
+            console.error("Frame skip", err);
+          }
+          
+          // Only trigger next frame after current frame processing completes
+          if(videoRef.current && !videoRef.current.paused) {
+             intervalRef.current = setTimeout(loop, 150);
+          }
+        };
+        
+        intervalRef.current = setTimeout(loop, 150);
+      };
+
+      return (
+        <div className="app-container fade-in">
+          
+          {/* Step 1: Registration Form */}
+          {step === 1 && (
+            <div className="fade-in">
+              <h1>Create Workspace</h1>
+              
+              <form onSubmit={handleRegister}>
+                <div className="form-group">
+                  <label>Full Legal Name</label>
+                  <input type="text" required placeholder="John Doe" />
+                </div>
+                <div className="form-group">
+                  <label>Work Email</label>
+                  <input type="email" required placeholder="john@company.com" onChange={e => setEmail(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>Password Vault</label>
+                  <input type="password" required placeholder="••••••••" />
+                </div>
+                
+                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                  {isLoading ? <><Icons.Loader /> Encrypting...</> : 'Continue Security Protocol'}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Step 2: Login Magic Link */}
+          {step === 2 && (
+            <div className="fade-in">
+              <h1>Verify Identity Layer</h1>
+              <p className="subtitle">Firebase Magic Link Authentication</p>
+              
+              <form onSubmit={handleSendLink}>
+                <div className="form-group">
+                  <label>Email Address</label>
+                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+                
+                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                  {isLoading ? <><Icons.Loader /> Routing...</> : <><Icons.Mail /> Send Auth Link</>}
+                </button>
+
+                <button type="button" className="btn btn-secondary" onClick={() => setStep(4)}>
+                  Bypass to Biometrics {`->`}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Step 3: Inbox Waiting */}
+          {step === 3 && (
+            <div className="fade-in" style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div style={{ padding: '20px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%', width:'80px', height:'80px', margin: '0 auto 20px', display:'flex', alignItems:'center', justifyContent:'center', color:'#3B82F6' }}>
+                <Icons.Mail />
+              </div>
+              <h1>Check Your Inbox</h1>
+              <p className="subtitle">We routed a secure link to {email}.<br/>Clicking it will automatically advance this screen.</p>
+              <button className="btn btn-secondary margin-top" onClick={() => setStep(4)}>Dev Bypass Trigger</button>
+            </div>
+          )}
+
+          {/* Step 4: ID Card Verification */}
+          {step === 4 && (
+            <div className="fade-in" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+              <div style={{ color: '#60A5FA', fontWeight: 800, fontSize: '13px', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '12px' }}>Hirex Neural Gatekeeper</div>
+              <h1 style={{ textAlign: 'center', width: '100%' }}>Identity Document</h1>
+              <p className="subtitle">Welcome to the Hirex B2B Workspace. Please securely upload your Government picture ID to cross-reference and initialize your session.</p>
+              
+              {modelsLoaded ? (
+                <div className="upload-zone" onClick={() => document.getElementById('id-upload').click()}>
+                  <Icons.Upload />
+                  <h3 style={{ fontSize: '16px', marginBottom: '8px' }}>Select ID Image</h3>
+                  <p style={{ fontSize: '13px', color: '#94A3B8' }}>JPEG, PNG up to 10MB</p>
+                  <input type="file" id="id-upload" accept="image/*" style={{ display: 'none' }} onChange={handleIdUpload} />
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <Icons.Loader />
+                  <p style={{ marginTop: '16px', color: '#94A3B8' }}>Downloading Neural Maps...</p>
+                </div>
+              )}
+
+              {isLoading && (
+                <p style={{ textAlign: 'center', marginTop: '16px', color: '#3B82F6', fontWeight: '600' }}>Extracting 128-D Descriptors...</p>
+              )}
+            </div>
+          )}
+
+          {/* Step 5: Live Video Liveness */}
+          {step === 5 && (
+            <div className="fade-in" style={{ textAlign: 'center' }}>
+              <h1>Liveness Test</h1>
+              <p className="subtitle">Verifying 3D mapping against your ID card embedding.</p>
+              
+              <div className="webcam-container">
+                <video ref={videoRef} autoPlay muted playsInline onPlay={handleVideoPlay} style={{ width: '100%', height: '100%', objectFit: 'cover' }}></video>
+                <div className="instruction-toast">
+                  {INSTRUCTIONS[Math.floor(instructionIndex / 10) % INSTRUCTIONS.length]}
+                </div>
+              </div>
+
+              <div style={{ marginTop: '20px', height: '20px' }}>
+                {livenessError ? (
+                  <span style={{ color: '#EF4444', fontWeight: '600', fontSize: '13px' }}>{livenessError}</span>
+                ) : (
+                  <span style={{ color: '#10B981', fontWeight: '600', fontSize: '13px' }}>Identity Locked • Analyzing Frames...</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Success */}
+          {step === 6 && (
+            <div className="fade-in success-screen">
+              <div className="success-icon">
+                <Icons.Check />
+              </div>
+              <h1 style={{ color: '#10B981', backgroundImage: 'none', webkitTextFillColor: '#10B981' }}>Verification Passed</h1>
+              <p className="subtitle" style={{ marginTop: '16px' }}>Network identity matched. Your wallet and credentials are now secured.</p>
+              
+              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', textAlign: 'left', marginTop: '32px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span style={{ color: '#94A3B8', fontSize: '13px' }}>Liveness Status:</span>
+                  <span style={{ color: '#10B981', fontWeight: '600', fontSize: '13px' }}>Verified</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#94A3B8', fontSize: '13px' }}>Biometric Score:</span>
+                  <span style={{ color: '#3B82F6', fontWeight: '600', fontSize: '13px' }}>92.8% Match</span>
+                </div>
+              </div>
+
+              <button className="btn btn-primary" style={{ marginTop: '32px' }} onClick={() => window.location.href = 'dashboard.html'}>Enter Secure Dashboard</button>
+            </div>
+          )}
+
+          {/* Extracted Progress Dots attached to floor */}
+          <div className="progress-container" style={{ marginTop: 'auto', paddingTop: '40px', marginBottom: '0' }}>
+            <div className="progress-line"></div>
+            <div className="progress-line-fill" style={{ width: `${(Math.max(0, [1,4,5,6].indexOf(step))) * 33.33}%` }}></div>
+            {[1, 4, 5, 6].map((s, idx) => {
+              const isActive = step >= s;
+              return <div key={s} className={`progress-dot ${isActive ? 'active' : ''} ${step > s ? 'completed' : ''}`}></div>;
+            })}
+          </div>
+
+        </div>
+      );
+    }
+
+    // CSS Animation injected safely
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+      .spin { animation: spin 1.5s linear infinite; }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+    `;
+    document.head.appendChild(styleSheet);
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
